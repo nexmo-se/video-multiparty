@@ -13,6 +13,7 @@ import useSubscriber from '../../hooks/subscriber';
 import { CompressOutlined } from '@mui/icons-material';
 import MoreSettings from '../../MoreSettings';
 import MoreMenu from '../../MoreMenu';
+import { UserContext } from '../../Context/user';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -23,6 +24,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Room() {
+  const { user } = useContext(UserContext);
   const wrapRef = useRef(null);
   const resizeTimerRef = useRef();
   const mPublisher = usePublisher('video-container');
@@ -85,7 +87,7 @@ function Room() {
 
   useEffect(() => {
     if (mSession.connected && !mPublisher.publisher) {
-      mPublisher.publish(mSession.user);
+      mPublisher.publish(user.defaultSettings.name);
     } else {
       return;
     }

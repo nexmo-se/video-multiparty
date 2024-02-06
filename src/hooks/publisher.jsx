@@ -5,6 +5,7 @@ import OT from '@opentok/client';
 import OTStats from '../utils/stats';
 // import delay from 'delay';
 import { SessionContext } from '../Context/session';
+import { getInitials } from '../util';
 
 function usePublisher(containerId, displayName = true) {
   const DFT_PUBLISHER_OPTIONS = {
@@ -14,7 +15,7 @@ function usePublisher(containerId, displayName = true) {
     // fitMode: 'contain',
   };
   //   const OTStats = useRef(null);
-  const [publisher, setPublisher] = useState();
+  const publisher = useRef(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publisherOptions, setPublisherOptions] = useState();
   const [stream, setStream] = useState();
@@ -24,7 +25,7 @@ function usePublisher(containerId, displayName = true) {
   const [simulcastLayers, setSimulcastLayers] = useState(null);
   const [getStats, setStats] = useState(null);
   function handleDestroyed() {
-    setPublisher(null);
+    publisher.current = null;
   }
 
   function onPublisherStatsAvailable(id, video, audio, rtcStats) {
@@ -42,23 +43,23 @@ function usePublisher(containerId, displayName = true) {
 
   function handleStreamDestroyed(e) {
     setStream(null);
-    if (publisher) publisher.destroy();
-    setPublisher(null);
+    if (publisher) publisher.current.destroy();
+    publisher.current = null;
   }
 
   function handleAccessDenied() {
-    if (publisher) publisher.destroy();
-    setPublisher(null);
+    if (publisher.current) publisher.current.destroy();
+    publisher.current = null;
   }
 
   async function unpublish() {
     if (publisher) {
-      mSession.session.unpublish(publisher);
+      mSession.session.unpublish(publisher.current);
     }
   }
 
   const getRtcStats = useCallback(async () => {
-    if (publisher) {
+    if (publisher.current) {
       let prevTimeStamp = null;
       let protocol = null;
       let prevPacketsSent = null;
@@ -66,7 +67,7 @@ function usePublisher(containerId, displayName = true) {
       let prevBytesSent = null;
       let simulcastLayers = [];
       try {
-        const stats = await publisher.getRtcStatsReport();
+        const stats = await publisher.current.getRtcStatsReport();
 
         // setRtt([]);
         stats[0].rtcStatsReport.forEach((e) => {
@@ -109,7 +110,7 @@ function usePublisher(containerId, displayName = true) {
         console.log('[useRtcStats] -  error:', e);
       }
     }
-  }, [publisher]);
+  }, [publisher.current]);
 
   function insertWifiIcon(targetSubscriber, targetDom) {
     if (document.getElementById(`${targetSubscriber.id}-mute`)) return;
@@ -131,7 +132,7 @@ function usePublisher(containerId, displayName = true) {
 
   const initPublisher = useCallback((container, publisherOptions) => {
     console.log(publisherOptions);
-    if (publisher) {
+    if (publisher.current) {
       console.log(' - initPublisher - already initiated');
       return;
     }
@@ -140,7 +141,7 @@ function usePublisher(containerId, displayName = true) {
 
     const publ = OT.initPublisher(container, finalPublisherOptions, (err) => {
       if (err) {
-        publisher = null;
+        publisher.current = null;
         if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') return;
         console.log(' - initPublisher err', err);
         return;
@@ -148,18 +149,22 @@ function usePublisher(containerId, displayName = true) {
       console.log('pub initialised');
     });
 
-    setPublisher(publ);
+    publisher.current = publ;
   }, []);
 
   const destroyPublisher = () => {
-    if (publisher) {
-      publisher.destroy();
-      publisher = null;
+    if (publisher.current) {
+      console.log('destroying it ');
+      publisher.current.destroy();
+      publisher.current = null;
+    } else {
+      console.log('pub not destroyed');
     }
   };
 
   async function publishAttempt(publisher, attempt = 1, noRetry = true) {
     console.log(`Attempting to publish in ${attempt} try`);
+    console.log(publisher);
     if (attempt > 1) {
       publisher = OT.initPublisher(containerId, publisherOptions);
     }
@@ -186,7 +191,7 @@ function usePublisher(containerId, displayName = true) {
     if (retry) {
       // Wait for 2 seconds before attempting to publish again
       await delay(2000 * attempt);
-      await publishAttempt(publisher, attempt + 1);
+      await publishAttempt(publisher.current, attempt + 1);
     } else if (error) {
       if (noRetry) return;
       alert(`
@@ -195,10 +200,10 @@ function usePublisher(containerId, displayName = true) {
       You may refresh the page to retry`);
       mSession.disconnect();
       setIsPublishing(false);
-      setPublisher(null);
+      publisher.current = null;
     } else {
       setIsPublishing(false);
-      setPublisher(publisher);
+      publisher.current = publisher;
     }
   }
 
@@ -207,29 +212,32 @@ function usePublisher(containerId, displayName = true) {
       if (!mSession.session) throw new Error('You are not connected to session');
       setIsPublishing(true);
 
-      if (!publisher) {
-        const options = {
-          insertMode: 'append',
-          name: Math.floor(Math.random() * 100, 2),
-          publishAudio: hasAudio,
-          publishVideo: hasVideo,
-          style: {
-            buttonDisplayMode: 'off',
-            nameDisplayMode: displayName ? 'on' : 'off',
-          },
-        };
-        const finalOptions = Object.assign({}, options, extraData);
-        setPublisherOptions(finalOptions);
-        const newPublisher = OT.initPublisher(containerId, finalOptions);
+      // if (!publishAttempt) {
+      console.log('cutimba');
+      const options = {
+        insertMode: 'append',
+        name: Math.floor(Math.random() * 100, 2),
+        publishAudio: hasAudio,
+        publishVideo: hasVideo,
+        initials: getInitials(user),
+        style: {
+          buttonDisplayMode: 'off',
+          nameDisplayMode: displayName ? 'on' : 'off',
+        },
+      };
+      const finalOptions = Object.assign({}, options, extraData);
+      setPublisherOptions(finalOptions);
+      const newPublisher = OT.initPublisher(containerId, finalOptions);
 
-        stats.addPublisher(newPublisher);
-        stats.setPublisherOnStatsAvailableListener(onPublisherStatsAvailable);
-        stats.start();
+      stats.addPublisher(newPublisher);
+      stats.setPublisherOnStatsAvailableListener(onPublisherStatsAvailable);
+      stats.start();
 
-        publishAttempt(newPublisher, 1);
-      } else {
-        publishAttempt(publisher);
-      }
+      publishAttempt(newPublisher, 1);
+      publisher.current = newPublisher;
+      // } else {
+      //   publishAttempt(publisher.current);
+      // }
     } catch (err) {
       console.log(err.stack);
     }
@@ -241,13 +249,13 @@ function usePublisher(containerId, displayName = true) {
     } catch (err) {
       console.log(err.stack);
     }
-  }, [publisher, stream, layoutManager, containerId]);
+  }, [publisher.current, stream, layoutManager, containerId]);
 
   return {
     isPublishing,
     unpublish,
     publish,
-    publisher,
+    publisher: publisher.current,
     getStats,
     getRtcStats,
     simulcastLayers,
