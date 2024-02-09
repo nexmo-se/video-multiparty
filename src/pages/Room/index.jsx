@@ -43,12 +43,6 @@ function Room() {
   }, []);
 
   // useEffect(() => {
-  //   window.onresize = () => {
-  //     if (mSubscriber.callLayout) mSubscriber.callLayout.layout();
-  //   };
-  // }, []);
-
-  // useEffect(() => {
   //   mSubscriber.subscribe(mSession.streams);
   //   if (mSubscriber.callLayout) mSubscriber.callLayout.layout();
   // }, [mSession.streams]);
@@ -173,10 +167,11 @@ function Room() {
         </div>
       </Grid> */}
       <div className="flex justify-center flex-end items-center absolute h-[90px] radius-[25px] w-full bottom-[0px] left-[0px] bg-black rounded-3xl">
-        <MuteVideoButton></MuteVideoButton>
-        <MuteAudioButton></MuteAudioButton>
+        <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
+        <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
         <MoreButton subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
-        <MoreSettings subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
+        <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} />
+        <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />
       </div>
     </Grid>
   );

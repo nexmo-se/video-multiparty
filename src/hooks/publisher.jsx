@@ -6,6 +6,7 @@ import OTStats from '../utils/stats';
 // import delay from 'delay';
 import { SessionContext } from '../Context/session';
 import { getInitials } from '../util';
+import { UserContext } from '../Context/user';
 
 function usePublisher(containerId, displayName = true) {
   const DFT_PUBLISHER_OPTIONS = {
@@ -14,6 +15,7 @@ function usePublisher(containerId, displayName = true) {
     height: '100%',
     // fitMode: 'contain',
   };
+  const { user } = useContext(UserContext);
   //   const OTStats = useRef(null);
   const publisher = useRef(null);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -207,7 +209,7 @@ function usePublisher(containerId, displayName = true) {
     }
   }
 
-  async function publish(user, extraData) {
+  async function publish(name, extraData) {
     try {
       if (!mSession.session) throw new Error('You are not connected to session');
       setIsPublishing(true);
@@ -217,10 +219,10 @@ function usePublisher(containerId, displayName = true) {
       console.log('cutimba');
       const options = {
         insertMode: 'append',
-        name: user,
-        publishAudio: true,
-        publishVideo: true,
-        initials: getInitials(user),
+        name: name,
+        publishAudio: user.defaultSettings.publishAudio,
+        publishVideo: user.defaultSettings.publishVideo,
+        initials: getInitials(name),
         style: {
           buttonDisplayMode: 'off',
           nameDisplayMode: displayName ? 'on' : 'off',

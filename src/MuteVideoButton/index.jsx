@@ -15,58 +15,69 @@ import { MenuItem, MenuList } from '@mui/material';
 // import MenuItem from '@material-ui/core/MenuItem';
 // import MenuList from '@material-ui/core/MenuList';
 import React from 'react';
+import { useState } from 'react';
 
-// import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../context/user';
 
-export default function MuteVideoButton({ classes, hasVideo, toggleVideo, getVideoSource, cameraPublishing, changeVideoSource }) {
-  const title = hasVideo ? 'Disable Camera' : 'Enable Camera';
+export default function MuteVideoButton({ publisher }) {
+  const { user } = React.useContext(UserContext);
+  //   const title = hasVideo ? 'Disable Camera' : 'Enable Camera';
   const { deviceInfo } = useDevices();
   const [devicesAvailable, setDevicesAvailable] = React.useState(null);
   const [options, setOptions] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [video, setHasVideo] = useState(user.defaultSettings.publishVideo);
 
-  //   const { user } = React.useContext(UserContext);
+  const toggleVideo = () => {
+    console.log(publisher);
+    if (!publisher) return;
+    publisher.publishVideo(!video);
+    setHasVideo((prev) => !prev);
+  };
 
-  //   React.useEffect(() => {
-  //     setDevicesAvailable(deviceInfo.videoInputDevices);
-  //     if (cameraPublishing) {
-  //       const currentDeviceId = getVideoSource()?.deviceId;
+  const changeVideoSource = (videoDeviceId) => {
+    publisher.setVideoSource(videoDeviceId);
+  };
 
-  //       const IndexOfSelectedElement = devicesAvailable.indexOf(devicesAvailable.find((e) => e.deviceId === currentDeviceId));
-  //       setSelectedIndex(IndexOfSelectedElement);
-  //     }
-  //   }, [cameraPublishing, getVideoSource, deviceInfo, devicesAvailable]);
+  React.useEffect(() => {
+    setDevicesAvailable(deviceInfo.videoInputDevices);
+    if (publisher) {
+      const currentDeviceId = publisher.getVideoSource()?.deviceId;
 
-  //   React.useEffect(() => {
-  //     if (devicesAvailable) {
-  //       const videoDevicesAvailable = devicesAvailable.map((e) => {
-  //         return e.label;
-  //       });
-  //       setOptions(videoDevicesAvailable);
-  //     }
-  //     // if (user.videoEffects.backgroundBlur)
-  //     //   setOptions(['Not available with Background Blurring']);
-  //   }, [devicesAvailable]);
+      const IndexOfSelectedElement = devicesAvailable.indexOf(devicesAvailable.find((e) => e.deviceId === currentDeviceId));
+      setSelectedIndex(IndexOfSelectedElement);
+    }
+  }, [publisher, deviceInfo, devicesAvailable]);
 
-  //   const handleChangeVideoSource = (event, index) => {
-  //     setSelectedIndex(index);
-  //     setOpen(false);
-  //     const videoDeviceId = devicesAvailable.find((device) => device.label === event.target.textContent).deviceId;
-  //     changeVideoSource(videoDeviceId);
-  //   };
+  React.useEffect(() => {
+    if (devicesAvailable) {
+      const videoDevicesAvailable = devicesAvailable.map((e) => {
+        return e.label;
+      });
+      setOptions(videoDevicesAvailable);
+    }
+    if (user.defaultSettings.blur) setOptions(['Not available with Background Blurring']);
+  }, [devicesAvailable]);
 
-  //   const handleToggle = (e) => {
-  //     setOpen((prevOpen) => !prevOpen);
-  //   };
+  const handleChangeVideoSource = (event, index) => {
+    setSelectedIndex(index);
+    setOpen(false);
+    const videoDeviceId = devicesAvailable.find((device) => device.label === event.target.textContent).deviceId;
+    changeVideoSource(videoDeviceId);
+  };
 
-  //   const handleClose = (event) => {
-  //     if (anchorRef.current && anchorRef.current.contains(event.target)) {
-  //       return;
-  //     }
-  //     setOpen(false);
-  //   };
+  const handleToggle = (e) => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+    setOpen(false);
+  };
 
   return (
     <>
@@ -78,7 +89,7 @@ export default function MuteVideoButton({ classes, hasVideo, toggleVideo, getVid
         ref={anchorRef}
         aria-label="split button"
       >
-        <Tooltip title={title} aria-label="add">
+        <Tooltip title={'video'} aria-label="add">
           <IconButton
             onClick={toggleVideo}
             edge="start"
@@ -86,7 +97,8 @@ export default function MuteVideoButton({ classes, hasVideo, toggleVideo, getVid
             size="small"
             className={`h-[50px] m-[3px] w-[50px] background-white rounded-3xl color-white`}
           >
-            {!hasVideo ? <VideocamOff bg-rose-50 /> : <VideoCam />}
+            {!video ? <VideocamOff bg-rose-50 /> : <Videocam />}
+            {/* <Videocam /> */}
           </IconButton>
         </Tooltip>
         <IconButton
@@ -95,7 +107,7 @@ export default function MuteVideoButton({ classes, hasVideo, toggleVideo, getVid
           aria-expanded={open ? 'true' : undefined}
           aria-label="select merge strategy"
           aria-haspopup="menu"
-          //   onClick={handleToggle}
+          onClick={handleToggle}
           className="rounded-3xl h-[50px] w-[50px] bg-rose-50 "
         >
           <ArrowDropDown className="bg-rose-50" color="white" />
