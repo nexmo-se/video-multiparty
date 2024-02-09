@@ -14,6 +14,9 @@ import { CompressOutlined } from '@mui/icons-material';
 import MoreSettings from '../../MoreSettings';
 import MoreMenu from '../../MoreMenu';
 import { UserContext } from '../../Context/user';
+import MuteVideoButton from '../../MuteVideoButton';
+import MuteAudioButton from '../../MuteAudioButton';
+import MoreButton from '../../MoreButton';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -87,7 +90,16 @@ function Room() {
 
   useEffect(() => {
     if (mSession.connected && !mPublisher.publisher) {
-      mPublisher.publish(user.defaultSettings.name);
+      const blur = user.defaultSettings.blur
+        ? {
+            videoFilter: {
+              type: 'backgroundBlur',
+              blurStrength: 'high',
+            },
+          }
+        : {};
+
+      mPublisher.publish(user.defaultSettings.name, blur);
     } else {
       return;
     }
@@ -151,7 +163,7 @@ function Room() {
         </Grid>
       )}
       {/* <MoreMenu></MoreMenu> */}
-      <Grid height={'10vh p-2'} item xs={8}>
+      {/* <Grid height={'10vh p-2'} item xs={8}>
         <div className="absolute bottom-[10px] left-1/3">
           <AudioSettings></AudioSettings>
           <VideoSettings></VideoSettings>
@@ -159,7 +171,13 @@ function Room() {
           <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} />
           <MoreSettings subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
         </div>
-      </Grid>
+      </Grid> */}
+      <div className="flex justify-center flex-end items-center absolute h-[90px] radius-[25px] w-full bottom-[0px] left-[0px] bg-black rounded-3xl">
+        <MuteVideoButton></MuteVideoButton>
+        <MuteAudioButton></MuteAudioButton>
+        <MoreButton subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
+        <MoreSettings subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
+      </div>
     </Grid>
   );
 }

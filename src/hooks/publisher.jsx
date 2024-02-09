@@ -30,7 +30,7 @@ function usePublisher(containerId, displayName = true) {
 
   function onPublisherStatsAvailable(id, video, audio, rtcStats) {
     // console.log(rtcStats);
-    setStats({ ...video, ...rtcStats });
+    setStats({ ...video, ...rtcStats, ...audio });
 
     // document.getElementById(id+"lbl").innerHTML = video.width+"x"+video.height+"@"+video.frameRate+"fps<br/>VBW:"+video.bandwidth+"Kbps PL:"+video.packetLoss+"%<br/>ABW:"+audio.bandwidth+"Kbps PL:"+audio.packetLoss+"%";
   }
@@ -120,11 +120,11 @@ function usePublisher(containerId, displayName = true) {
     position: absolute; 
     top: 8px; 
     right: 8px;
-    background: url('https://media.istockphoto.com/id/1290538715/video/animation-of-wi-fi-wifi-icon-on-white-background-4k-video.jpg?s=640x640&k=20&c=U0iCtcNipB0ZFujRtTqARKeJ2gCqiMgc4i5FVi_rhlo=');
+    background: url('https://purepng.com/public/uploads/large/purepng.com-wifi-icon-greenwifi-iconwifiiconwireless-connection-170152843620015a2q.png');
     background-position: center;
     background-size: contain;
-    height: 18px;
-    width: 18px;
+    height: 28px;
+    width: 28px;
     background-repeat: no-repeat;">
     </div>`;
     targetDom.insertAdjacentHTML('beforeend', childNodeStr);
@@ -207,18 +207,19 @@ function usePublisher(containerId, displayName = true) {
     }
   }
 
-  async function publish(user, hasAudio = true, hasVideo = true, extraData) {
+  async function publish(user, extraData) {
     try {
       if (!mSession.session) throw new Error('You are not connected to session');
       setIsPublishing(true);
+      console.log(extraData);
 
       // if (!publishAttempt) {
       console.log('cutimba');
       const options = {
         insertMode: 'append',
-        name: Math.floor(Math.random() * 100, 2),
-        publishAudio: hasAudio,
-        publishVideo: hasVideo,
+        name: user,
+        publishAudio: true,
+        publishVideo: true,
         initials: getInitials(user),
         style: {
           buttonDisplayMode: 'off',

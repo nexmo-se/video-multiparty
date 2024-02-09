@@ -9,7 +9,7 @@ import NetworkDetails from '../NetworkDetails';
 import Participants from '../Participants';
 import { ClickAwayListener } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-
+import Test from '../Test/index';
 function MoreSettings({ subStats, rtcStats, stats }) {
   const [menuState, setMenuState] = React.useState(null);
   const [participantsMenuOpen, setParticipantsMenuOpen] = React.useState(false);
@@ -31,7 +31,7 @@ function MoreSettings({ subStats, rtcStats, stats }) {
     <>
       <Dropdown className="contents">
         <MenuButton className="contents" slots={{ root: IconButton }} slotProps={{ root: { variant: '', color: 'neutral' } }}>
-          <MoreVert className="contents" fontSize="large" />
+          <MoreVert className="my-5 contents" fontSize="large" />
         </MenuButton>
         <Menu>
           <MenuItem
@@ -49,7 +49,14 @@ function MoreSettings({ subStats, rtcStats, stats }) {
           >
             Participants
           </MenuItem>
-          <MenuItem>Logout</MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleMenuItem('participants-expanded');
+              toggler();
+            }}
+          >
+            Participants 2
+          </MenuItem>
         </Menu>
       </Dropdown>
       {menuState === 'network' && (
@@ -67,6 +74,7 @@ function MoreSettings({ subStats, rtcStats, stats }) {
         ></Participants>
         // </ClickAwayListener>
       )}
+      {menuState === 'participants-expanded' && <Test subStats={subStats} rtcStats={rtcStats} stats={stats}></Test>}
     </>
   );
 }

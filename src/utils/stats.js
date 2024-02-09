@@ -129,8 +129,8 @@ const OTStats = (options) => {
               packetLoss: videoPLRatio,
             },
             {
-              bandwidth: audioKbps,
-              packetLoss: audioPLRatio,
+              audioBandwidth: audioKbps,
+              audioPacketLoss: audioPLRatio,
             },
             rtcStats
           );
@@ -218,7 +218,6 @@ const OTStats = (options) => {
 
   const getRtcStats = async ({ publisher }) => {
     if (publisher) {
-      console.log(publisher);
       let prevTimeStamp = {};
       let protocol = null;
       let prevPacketsSent = {};
@@ -231,6 +230,10 @@ const OTStats = (options) => {
       let audioPacketLost = null;
       let codec = null;
       let audioCodec = null;
+      let localIp;
+      let port;
+      let remoteIp;
+      let remotePort;
 
       try {
         const stats = await publisher.getRtcStatsReport();
@@ -240,10 +243,13 @@ const OTStats = (options) => {
         stats[0].rtcStatsReport.forEach((e) => {
           if (e.type === 'local-candidate' && e.url) {
             console.log(e);
+            port = e.port;
+            localIp = e.relatedAddress;
             if (e.networkType === 'vpn') hasVpn = true;
             connectionType = e.networkType;
             candidateType = e.candidateType;
             networkType = e.networkType;
+
             // setConnectionType(e.networkType);
             if (e.candidateType === 'relay') {
               //   setProtocol(`TURN ${e.relayProtocol}`);
@@ -269,12 +275,14 @@ const OTStats = (options) => {
             simulcastLayers = [...simulcastLayers, newLayers];
           }
           if (e.type === 'remote-candidate') {
+            remoteIp = e.ip;
+            remotePort = e.port;
             console.log(e);
             // Rest of the loop for subsequent iterations
           }
           if (e.type === 'remote-inbound-rtp' && e.kind === 'audio') {
             jitterAudio = e.jitter;
-            audioPacketLost = e.fractionLost;
+            // audioPacketLost = e.fractionLost;
           }
           if (e.type === 'codec') {
             if (e.mimeType.startsWith('audio')) {
@@ -295,6 +303,10 @@ const OTStats = (options) => {
           audioPacketLost,
           audioCodec,
           codec,
+          localIp,
+          port,
+          remoteIp,
+          remotePort,
         };
 
         /* setIsScreenSharing(true); */
@@ -310,7 +322,6 @@ const OTStats = (options) => {
     let aggregateVBW = 0;
     let aggregateABW = 0;
     for (let subscriberId in subscribers) {
-      console.log(subscriberId);
       aggregateABW += subscribers[subscriberId].audio.prevKbps;
       aggregateVBW += subscribers[subscriberId].video.prevKbps;
     }

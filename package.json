@@ -19,6 +19,7 @@
     "@mui/x-charts": "^6.19.1",
     "@mui/x-data-grid": "^6.19.2",
     "@opentok/client": "^2.27.1",
+    "howler": "^2.2.4",
     "install": "^0.13.0",
     "npm": "^10.4.0",
     "opentok-layout-js": "^5.3.0",

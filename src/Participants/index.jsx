@@ -60,15 +60,12 @@ function Participants({ toggler, participantsMenuOpen }) {
       // onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {/* <ListItem disablePadding>
-          Subscribe at low
-          <SettingsSuggestIcon></SettingsSuggestIcon>
-          <IconButton
-            onClick={() => {
-              subscribe('low');
-            }}
-          ></IconButton>
-        </ListItem> */}
+        <ListItem key={'you'} disablePadding>
+          <ListItemButton>
+            <PersonIcon></PersonIcon>
+            <ListItemText className="mx-3" primary={'You'} />
+          </ListItemButton>
+        </ListItem>
 
         {subscribers.length > 0 &&
           subscribers.map((sub) => (

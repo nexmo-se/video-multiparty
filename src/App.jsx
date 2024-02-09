@@ -3,7 +3,6 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import Room from './pages/Room/index';
-import Test from './pages/Test';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -19,12 +18,12 @@ function App() {
       <UserProvider>
         <Routes>
           <Route path="/waiting-room" element={<WaitingRoom />} />
+          <Route path="*" element={<WaitingRoom />} />
           <Route
             path="/room"
             element={
               <div className="">
                 <Room></Room>
-                {/* <Test></Test> */}
               </div>
             }
           />

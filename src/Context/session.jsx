@@ -107,7 +107,7 @@ function SessionProvider({ children }) {
     });
   }
 
-  function insertWifiIcon(targetSubscriber) {
+  function insertPinIcon(targetSubscriber) {
     const childNodeStr = `<button 
     id="speakerPin-${targetSubscriber.id}"
     style="
@@ -140,9 +140,9 @@ function SessionProvider({ children }) {
       });
       const subscriber = session.current.subscribe(stream, 'video-container', finalOptions);
       const element = subscriber.element;
-      insertWifiIcon(element);
+      insertPinIcon(element);
       const pinEl = document.getElementById(`speakerPin-${element.id}`);
-      pinEl.addEventListener('dblclick', function () {
+      pinEl.addEventListener('click', function () {
         if (element.classList.contains('OT_big')) {
           element.classList.remove('OT_big');
         } else {

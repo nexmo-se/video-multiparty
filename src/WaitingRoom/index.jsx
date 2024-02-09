@@ -32,7 +32,8 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useEffect } from 'react';
 import useDevices from '../hooks/useDevices';
-import { IconButton } from '@mui/material';
+import useSound from '../hooks/sound';
+import { IconButton, LinearProgress } from '@mui/material';
 
 import AudioSettingsWaitingRoom from '../AudioSettingsWaitingRoom';
 import VideoSettingsWaitingRoom from '../VideoSettingsWaitingRoom';
@@ -42,6 +43,8 @@ import BlurSettings from '../BlurSettings';
 
 function WaitingRoom() {
   const navigate = useNavigate();
+  const { play, playing } = useSound();
+  const [logLevel, setLogLevel] = useState(0);
   const { user, setUser } = useContext(UserContext);
   let [audioDevice, setAudioDevice] = useState('');
   let [videoDevice, setVideoDevice] = useState('');
@@ -135,6 +138,18 @@ function WaitingRoom() {
     setLocalVideo(e.target.checked);
   }, []);
 
+  const calculateAudioLevel = React.useCallback((audioLevel) => {
+    let movingAvg = null;
+    if (movingAvg === null || movingAvg <= audioLevel) {
+      movingAvg = audioLevel;
+    } else {
+      movingAvg = 0.8 * movingAvg + 0.2 * audioLevel;
+    }
+    // 1.5 scaling to map the -30 - 0 dBm range to [0,1]
+    const currentLogLevel = Math.log(movingAvg) / Math.LN10 / 1.5 + 1;
+    setLogLevel(Math.min(Math.max(currentLogLevel, 0), 1) * 100);
+  }, []);
+
   const handleVideoSource = useCallback(
     (e) => {
       const videoDeviceId = e.target.getAttribute('value');
@@ -192,8 +207,16 @@ function WaitingRoom() {
         console.log('getting devices');
         getDevices();
       });
+      publisher.on('audioLevelUpdated', ({ audioLevel }) => {
+        calculateAudioLevel(audioLevel);
+      });
+
+      // return () => {
+      //   publisher.off('accessAllowed', () => {});
+      //   publisher.off('audioLevelUpdated', () => {});
+      // };
     }
-  }, [publisher]);
+  }, [publisher, calculateAudioLevel]);
 
   useEffect(() => {
     if (containerRef.current && !publisher) {
@@ -209,7 +232,7 @@ function WaitingRoom() {
   return (
     <React.Fragment>
       <CssBaseline />
-      <div className="flex m-auto max-w-screen-sm  w-['360px'] p-['25px',] left-['50%',] top-['50%',]">
+      <div className="flex m-auto max-w-screen-sm max-h-screen  w-['360px'] p-['25px',] left-['50%',] top-['50%',]">
         <Grid className="border-solid" container direction="column" justifyContent="center" alignItems="center">
           <List
             sx={{ width: '100%', maxWidth: '60%', bgcolor: 'background.paper' }}
@@ -301,10 +324,16 @@ function WaitingRoom() {
                 ))}
               </List>
             </Collapse>
+            <Button variant="outlined" onClick={play} startIcon={<Speaker />}>
+              {!playing ? 'Test speaker' : 'Stop sound'}
+            </Button>
+
             <div className="my-5 flex justify-center ">
               <Grid container direction="column" justifyContent="center" alignItems="center">
                 <AudioSettingsWaitingRoom hasAudio={localAudio} onAudioChange={handleAudioChange} />
-
+                <Box sx={{ width: '50%' }}>
+                  <LinearProgress variant="determinate" value={logLevel}></LinearProgress>
+                </Box>
                 <VideoSettingsWaitingRoom hasVideo={localVideo} onVideoChange={handleVideoChange} />
                 <BlurSettings hasBlur={blur} onBlurChange={handleBlurChange} />
 
@@ -313,7 +342,7 @@ function WaitingRoom() {
                   className="border-[3px] border-black"
                   variant="contained"
                   color="secondary"
-                  // disabled={!roomName || !userName}
+                  disabled={!userName}
                 >
                   Join Call
                 </Button>
