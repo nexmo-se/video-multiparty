@@ -105,7 +105,7 @@ function Room() {
     <Grid className="w-screen" container spacing={1}>
       <Grid ref={wrapRef} id="wrapper" height={captionsEnabled ? '80vh' : '90vh'} item xs={chatOpen ? 9 : 12}>
         <div id="video-container" className="flex column w-full h-full">
-          <img
+          {/* <img
             className="w-1/2"
             src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
           />
@@ -132,7 +132,7 @@ function Room() {
           <img
             className="w-1/2"
             src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
-          />
+          /> */}
         </div>
       </Grid>
       {chatOpen && (
@@ -157,22 +157,12 @@ function Room() {
           </div>
         </Grid>
       )}
-      {/* <MoreMenu></MoreMenu> */}
-      {/* <Grid height={'10vh p-2'} item xs={8}>
-        <div className="absolute bottom-[10px] left-1/3">
-          <AudioSettings></AudioSettings>
-          <VideoSettings></VideoSettings>
-          <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />
-          <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} />
-          <MoreSettings subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
-        </div>
-      </Grid> */}
       <div className="flex justify-center flex-end items-center absolute h-[90px] radius-[25px] w-full bottom-[0px] left-[0px] bg-black rounded-3xl">
         <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
         <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
         <ScreenSharingButton layout={mSubscriber.callLayout}></ScreenSharingButton>
         <MoreButton subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
-        <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} />
+        {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}
         <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />
       </div>
     </Grid>

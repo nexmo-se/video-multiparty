@@ -25,7 +25,6 @@ import { UserContext } from '../context/user';
 export default function ScreenSharingButton({ layout }) {
   const { user } = React.useContext(UserContext);
   const { session } = useContext(SessionContext);
-  const [callLayout, setCalLayout] = React.useState(new LayoutManager('video-container'));
   const screnSharingPub = React.useRef(null);
 
   const anchorRef = React.useRef(null);
@@ -55,7 +54,6 @@ export default function ScreenSharingButton({ layout }) {
       setSharing(false);
     }
     layout.layout();
-    // callLayout.layout();
   }
 
   return (

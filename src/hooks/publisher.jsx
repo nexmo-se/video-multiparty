@@ -39,7 +39,7 @@ function usePublisher(containerId, displayName = true) {
 
   function handleStreamCreated(e) {
     console.log(e.target.id);
-    insertWifiIcon(e.target.id, e.target.element);
+    // insertWifiIcon(e.target.id, e.target.element);
     setStream(e.stream);
   }
 
