@@ -3,5 +3,6 @@
 ## Running the app
 
 1. Install dependencies `npm install`
-2. Run `npm run dev`
-3. Visit `http://localhost:5173/`
+2. Replace credentials in `Context/session.jsx`
+3. Run `npm run dev`
+4. Visit `http://localhost:5173/`
