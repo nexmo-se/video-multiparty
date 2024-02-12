@@ -11,6 +11,8 @@ const DFT_PUBLISHER_OPTIONS = {
   // fitMode: 'contain',
 };
 import Grid from '@mui/material/Grid';
+import { DEVICE_ACCESS_STATUS } from '../constants';
+import DeviceAccessAlert from '../DeviceAccessAlert';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -64,6 +66,7 @@ function WaitingRoom() {
   const { initPublisher, destroyPublisher, publisher } = usePublisher();
   const [devices, setDevices] = useState(null);
   const [roomName, setRoomName] = useState('');
+  const [accessAllowed, setAccessAllowed] = useState(DEVICE_ACCESS_STATUS.PENDING);
 
   const handleClick = () => {
     setOpenAudioInput(!openAudioInput);
@@ -204,8 +207,12 @@ function WaitingRoom() {
   useEffect(() => {
     if (publisher) {
       publisher.on('accessAllowed', () => {
+        setAccessAllowed(DEVICE_ACCESS_STATUS.ACCEPTED);
         console.log('getting devices');
         getDevices();
+      });
+      publisher.on('accessDenied', () => {
+        setAccessAllowed(DEVICE_ACCESS_STATUS.REJECTED);
       });
       publisher.on('audioLevelUpdated', ({ audioLevel }) => {
         calculateAudioLevel(audioLevel);
@@ -353,6 +360,7 @@ function WaitingRoom() {
         {/* </Box> */}
         {/* </Container> */}
       </div>
+      {accessAllowed !== DEVICE_ACCESS_STATUS.ACCEPTED && <DeviceAccessAlert accessStatus={accessAllowed}></DeviceAccessAlert>}
     </React.Fragment>
   );
 }

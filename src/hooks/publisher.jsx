@@ -18,6 +18,7 @@ function usePublisher(containerId, displayName = true) {
   const { user } = useContext(UserContext);
   //   const OTStats = useRef(null);
   const publisher = useRef(null);
+  const [quality, setQuality] = useState('good');
   const [isPublishing, setIsPublishing] = useState(false);
   const [publisherOptions, setPublisherOptions] = useState();
   const [stream, setStream] = useState();
@@ -58,6 +59,22 @@ function usePublisher(containerId, displayName = true) {
     if (publisher) {
       mSession.session.unpublish(publisher.current);
     }
+  }
+
+  function handleVideoDisabled() {
+    setQuality('bad');
+  }
+
+  function handleVideoEnabled() {
+    setQuality('good');
+  }
+
+  function handleVideoWarning() {
+    setQuality('poor');
+  }
+
+  function handleVideoWarningLifted() {
+    setQuality('good');
   }
 
   const getRtcStats = useCallback(async () => {
@@ -175,6 +192,10 @@ function usePublisher(containerId, displayName = true) {
     publisher.on('streamCreated', handleStreamCreated);
     publisher.on('streamDestroyed', handleStreamDestroyed);
     publisher.on('accessDenied', handleAccessDenied);
+    publisher.on('videoDisabled', handleVideoDisabled);
+    publisher.on('videoEnabled', handleVideoEnabled);
+    publisher.on('videoDisableWarning', handleVideoWarning);
+    publisher.on('videoDisableWarningLifted', handleVideoWarningLifted);
 
     const { retry, error } = await new Promise((resolve, reject) => {
       mSession.session.publish(publisher, (err) => {
@@ -186,7 +207,10 @@ function usePublisher(containerId, displayName = true) {
         }
         if (err && attempt >= 3) {
           resolve({ retry: false, error: err });
-        } else resolve({ retry: false, error: undefined });
+        } else {
+          setIsPublishing(true);
+          resolve({ retry: false, error: undefined });
+        }
       });
     });
 
@@ -212,11 +236,10 @@ function usePublisher(containerId, displayName = true) {
   async function publish(name, extraData) {
     try {
       if (!mSession.session) throw new Error('You are not connected to session');
-      setIsPublishing(true);
+
       console.log(extraData);
 
       // if (!publishAttempt) {
-      console.log('cutimba');
       const options = {
         insertMode: 'append',
         name: name,
@@ -264,6 +287,7 @@ function usePublisher(containerId, displayName = true) {
     simulcastLayers,
     initPublisher,
     destroyPublisher,
+    quality,
   };
 }
 export default usePublisher;

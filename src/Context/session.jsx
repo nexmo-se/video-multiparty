@@ -18,6 +18,7 @@ function SessionProvider({ children }) {
   });
 
   const [subscribers, setSubscribers] = useState([]);
+  const [reconnecting, setReconnecting] = useState(false);
 
   const session = useRef(null);
   //   const navigate = useNavigate();
@@ -107,6 +108,13 @@ function SessionProvider({ children }) {
     });
   }
 
+  function handleReconnecting() {
+    setReconnecting(true);
+  }
+  function handleReconnected() {
+    setReconnecting(false);
+  }
+
   function insertPinIcon(targetSubscriber) {
     const childNodeStr = `<button 
     id="speakerPin-${targetSubscriber.id}"
@@ -169,6 +177,8 @@ function SessionProvider({ children }) {
       session.current.on('streamPropertyChanged', handleStreamPropertyChanged);
       session.current.on('streamCreated', (e) => handleStreamCreated(e));
       session.current.on('streamDestroyed', (e) => handleStreamDestroyed(e));
+      session.current.on('sessionReconnecting', (e) => handleReconnecting(e));
+      session.current.on('sessionReconnected', (e) => handleReconnected(e));
       session.current.on('sessionDisconnected', (e) => handleSessionDisconnected(e));
       session.current.on('connectionCreated', (e) => handleConnectionCreated(e));
       session.current.on('connectionDestroyed', (e) => handleConnectionDestroyed(e));
@@ -221,6 +231,7 @@ function SessionProvider({ children }) {
         joinRoom,
         connected,
         subscribers,
+        reconnecting,
       }}
     >
       {children}

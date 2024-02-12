@@ -18,6 +18,8 @@ import MuteVideoButton from '../../MuteVideoButton';
 import MuteAudioButton from '../../MuteAudioButton';
 import MoreButton from '../../MoreButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
+import ConnectionAlert from '../../ConnectionAlert';
+// import { useMediaProcessor } from '../../hooks/processor';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -35,6 +37,7 @@ function Room() {
   const mSubscriber = useSubscriber({
     call: 'video-container',
   });
+  const [isNoiseSuppressionEnabled, setNoiseSuppression] = useState(true);
   const mSession = useContext(SessionContext);
   const [chatOpen, setChatOpen] = useState(false);
   const [captionsEnabled, setCaptionsEnabled] = useState(false);
@@ -165,6 +168,13 @@ function Room() {
         {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}
         <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />
       </div>
+      {mSession.reconnecting && <ConnectionAlert message1={'Lost connection'} message2={'Please verify your network connection'} />}
+      {mPublisher.quality !== 'good' && (
+        <ConnectionAlert
+          message1={'Video quality problem'}
+          message2={'Please check your connectivity. Your video may be disabled to improve the user experience'}
+        />
+      )}
     </Grid>
   );
 }
