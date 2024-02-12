@@ -84,7 +84,7 @@ function SessionProvider({ children }) {
 
   function handleStreamCreated(e) {
     console.log('stream Created');
-    console.log(session.current);
+
     subscribe(e.stream, session);
     // mSubscriber.subscribe(e.stream, session);
     setStreams((prevStreams) => [...prevStreams, e.stream]);
@@ -102,7 +102,7 @@ function SessionProvider({ children }) {
 
   function handleStreamDestroyed(e) {
     setStreams((prevStreams) => [...prevStreams].filter((stream) => stream.id !== e.stream.id));
-    session.getSubscribersForStream(e.stream).forEach((subscriber) => {
+    session.current.getSubscribersForStream(e.stream).forEach((subscriber) => {
       removeSubscribers({ subscriber });
     });
   }
@@ -140,6 +140,10 @@ function SessionProvider({ children }) {
       });
       const subscriber = session.current.subscribe(stream, 'video-container', finalOptions);
       const element = subscriber.element;
+      if (stream.videoType === 'screen') {
+        element.classList.add('OT_big');
+      }
+
       insertPinIcon(element);
       const pinEl = document.getElementById(`speakerPin-${element.id}`);
       pinEl.addEventListener('click', function () {

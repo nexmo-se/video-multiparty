@@ -17,6 +17,7 @@ import { UserContext } from '../../Context/user';
 import MuteVideoButton from '../../MuteVideoButton';
 import MuteAudioButton from '../../MuteAudioButton';
 import MoreButton from '../../MoreButton';
+import ScreenSharingButton from '../../ScreenSharingButton';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -169,6 +170,7 @@ function Room() {
       <div className="flex justify-center flex-end items-center absolute h-[90px] radius-[25px] w-full bottom-[0px] left-[0px] bg-black rounded-3xl">
         <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
         <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
+        <ScreenSharingButton layout={mSubscriber.callLayout}></ScreenSharingButton>
         <MoreButton subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
         <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} />
         <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />
