@@ -19,6 +19,8 @@ import MuteAudioButton from '../../MuteAudioButton';
 import MoreButton from '../../MoreButton';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import ConnectionAlert from '../../ConnectionAlert';
+import Chat from '../../Chat';
+import BlurButton from '../../BlurButton';
 // import { useMediaProcessor } from '../../hooks/processor';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -139,18 +141,19 @@ function Room() {
         </div>
       </Grid>
       {chatOpen && (
-        <Grid height={'80vh'} item xs={3}>
-          <Item>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, unde ad distinctio optio nostrum aliquam illo animi quas hic
-            repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae! distinctio optio nostrum aliquam illo animi
-            quas hic repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!distinctio optio nostrum aliquam
-            illo animi quas hic repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!
-          </Item>
-          <Item>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, unde ad distinctio optio nostrum aliquam illo animi quas hic
-            repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!
-          </Item>
-        </Grid>
+        <Chat></Chat>
+        // <Grid height={'80vh'} item xs={3}>
+        //   <Item>
+        //     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, unde ad distinctio optio nostrum aliquam illo animi quas hic
+        //     repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae! distinctio optio nostrum aliquam illo animi
+        //     quas hic repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!distinctio optio nostrum aliquam
+        //     illo animi quas hic repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!
+        //   </Item>
+        //   <Item>
+        //     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, unde ad distinctio optio nostrum aliquam illo animi quas hic
+        //     repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!
+        //   </Item>
+        // </Grid>
       )}
       {captionsEnabled && (
         <Grid height={'10vh p-2'} item xs={8}>
@@ -164,6 +167,7 @@ function Room() {
         <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
         <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
         <ScreenSharingButton layout={mSubscriber.callLayout}></ScreenSharingButton>
+        <BlurButton publisher={mPublisher.publisher}></BlurButton>
         <MoreButton subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
         {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}
         <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />

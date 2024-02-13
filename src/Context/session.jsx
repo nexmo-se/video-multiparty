@@ -1,14 +1,15 @@
 // @flow
-import { useState, createContext, useRef, useEffect } from 'react';
+import { useState, createContext, useRef, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import OT from '@opentok/client';
 // import RoomAPI from 'api/room';
 // import CredentialAPI from 'api/credential';
 // import User from 'entities/user';
+const SINGAL_TYPE_CHAT = 'chat';
 import useSubscriber from '../hooks/subscriber';
 import LayoutManager from '../utils/layout-manager';
-
+import { UserContext } from './user';
 export const SessionContext = createContext({});
 const call = 'video-container';
 function SessionProvider({ children }) {
@@ -22,8 +23,9 @@ function SessionProvider({ children }) {
 
   const session = useRef(null);
   //   const navigate = useNavigate();
-  const [user, setUser] = useState();
   // const [session, setSession] = useState();
+  const [messages, setMessages] = useState([{ from: 'App', text: 'You can use the chat to say something nice' }]);
+  // const { user } = useContext(UserContext);
   const [streams, setStreams] = useState([]);
   const [changedStream, setChangedStream] = useState();
   const [connections, setConnections] = useState([]);
@@ -49,6 +51,18 @@ function SessionProvider({ children }) {
 
   function handleConnectionCreated(e) {
     setConnections((prevConnections) => [...prevConnections, e.connection]);
+  }
+
+  const addMessages = (data) => {
+    setMessages((prev) => [...prev, data]);
+  };
+
+  function onSignalChat({ type, data }) {
+    console.log(type);
+    if (type === `signal:${SINGAL_TYPE_CHAT}`) {
+      const { text, username } = JSON.parse(data);
+      addMessages({ text, from: `${username || '?'}`, time: new Date().toJSON().split('T')[1] });
+    }
   }
 
   function handleConnectionDestroyed(e) {
@@ -79,7 +93,7 @@ function SessionProvider({ children }) {
     setConnections([]);
     // setSession(null);
     session.current = null;
-    setUser(null);
+    // setUser(null);
     setConnected(false);
   }
 
@@ -182,6 +196,7 @@ function SessionProvider({ children }) {
       session.current.on('sessionDisconnected', (e) => handleSessionDisconnected(e));
       session.current.on('connectionCreated', (e) => handleConnectionCreated(e));
       session.current.on('connectionDestroyed', (e) => handleConnectionDestroyed(e));
+      session.current.on('signal', (e) => onSignalChat(e));
 
       await new Promise((resolve, reject) => {
         session.current.connect(credential.token, (err) => {
@@ -220,7 +235,7 @@ function SessionProvider({ children }) {
   return (
     <SessionContext.Provider
       value={{
-        user,
+        // user,
         subscribe,
         session: session.current,
         streams,
@@ -232,6 +247,7 @@ function SessionProvider({ children }) {
         connected,
         subscribers,
         reconnecting,
+        messages,
       }}
     >
       {children}

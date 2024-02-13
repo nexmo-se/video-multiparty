@@ -29,6 +29,7 @@ function ConnectionAlert({ message1, message2 }) {
         <Box sx={{ flex: 1 }}>
           <Typography level="title-md">{message1}</Typography>
           <Typography level="body-md">{message2}</Typography>
+
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 1 }}></Box>
         </Box>
       </Alert>

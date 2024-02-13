@@ -10,6 +10,7 @@ const DFT_PUBLISHER_OPTIONS = {
   publishVideo: true,
   // fitMode: 'contain',
 };
+import { getInitials } from '../util';
 import Grid from '@mui/material/Grid';
 import { DEVICE_ACCESS_STATUS } from '../constants';
 import DeviceAccessAlert from '../DeviceAccessAlert';
@@ -79,7 +80,7 @@ function WaitingRoom() {
   };
 
   const handleUsernameChange = useCallback((e) => {
-    setUser({ ...user, username: e.target.value });
+    setUser({ ...user, username: e.target.value, initials: getInitials(e.target.value) });
     setUserName(e.target.value);
   }, []);
 
