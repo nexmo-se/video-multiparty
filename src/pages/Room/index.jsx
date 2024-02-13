@@ -21,7 +21,8 @@ import ScreenSharingButton from '../../ScreenSharingButton';
 import ConnectionAlert from '../../ConnectionAlert';
 import Chat from '../../Chat';
 import BlurButton from '../../BlurButton';
-// import { useMediaProcessor } from '../../hooks/processor';
+import NoiseButton from '../../NoiseButton';
+import { useMediaProcessor } from '../../hooks/mediaProcessor';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -32,6 +33,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Room() {
+  const { processor, connector } = useMediaProcessor();
   const { user } = useContext(UserContext);
   const wrapRef = useRef(null);
   const resizeTimerRef = useRef();
@@ -39,7 +41,7 @@ function Room() {
   const mSubscriber = useSubscriber({
     call: 'video-container',
   });
-  const [isNoiseSuppressionEnabled, setNoiseSuppression] = useState(true);
+  const [isNoiseSuppressionEnabled, setNoiseSuppression] = useState(false);
   const mSession = useContext(SessionContext);
   const [chatOpen, setChatOpen] = useState(false);
   const [captionsEnabled, setCaptionsEnabled] = useState(false);
@@ -48,10 +50,34 @@ function Room() {
     mSession.joinRoom('perro', 'jose');
   }, []);
 
-  // useEffect(() => {
-  //   mSubscriber.subscribe(mSession.streams);
-  //   if (mSubscriber.callLayout) mSubscriber.callLayout.layout();
-  // }, [mSession.streams]);
+  const handleNoiseChange = () => {
+    console.log('toggling noise');
+    setNoiseSuppression((prev) => !prev);
+  };
+
+  useEffect(() => {
+    console.log('use effect run -toggle noise suppresion');
+    console.log(isNoiseSuppressionEnabled);
+    // if (OT.hasMediaProcessorSupport()) {
+    if (mPublisher.publisher) {
+      if (isNoiseSuppressionEnabled) {
+        console.log(mPublisher.publisher);
+        mPublisher.publisher
+          .setAudioMediaProcessorConnector(connector)
+          .catch(console.log)
+          .then(console.log('setAudioMediaProcessorConnector', isNoiseSuppressionEnabled));
+      } else {
+        console.log('turning off NS');
+        mPublisher.publisher
+          .setAudioMediaProcessorConnector(null)
+          .catch(console.log)
+          .then(console.log('setAudioMediaProcessorConnector', isNoiseSuppressionEnabled));
+      }
+    } else {
+      console.log('dping nothing');
+      console.log(mPublisher);
+    }
+  }, [mPublisher.isPublishing, isNoiseSuppressionEnabled, mPublisher.publisher]);
 
   useEffect(() => {
     const container = document.getElementById('wrapper');
@@ -114,47 +140,10 @@ function Room() {
             className="w-1/2"
             src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
           />
-          <img
-            className="w-1/2"
-            src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
-          />
-          <img
-            className="w-1/2"
-            src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
-          />
-          <img
-            className="w-1/2"
-            src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
-          />
-          <img
-            className="w-1/2"
-            src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
-          />
-          <img
-            className="w-1/2"
-            src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
-          />
-          <img
-            className="w-1/2"
-            src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
-          /> */}
+           */}
         </div>
       </Grid>
-      {chatOpen && (
-        <Chat></Chat>
-        // <Grid height={'80vh'} item xs={3}>
-        //   <Item>
-        //     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, unde ad distinctio optio nostrum aliquam illo animi quas hic
-        //     repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae! distinctio optio nostrum aliquam illo animi
-        //     quas hic repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!distinctio optio nostrum aliquam
-        //     illo animi quas hic repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!
-        //   </Item>
-        //   <Item>
-        //     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, unde ad distinctio optio nostrum aliquam illo animi quas hic
-        //     repellat, placeat, explicabo quam labore perspiciatis libero commodi esse vero quae!
-        //   </Item>
-        // </Grid>
-      )}
+      {chatOpen && <Chat></Chat>}
       {captionsEnabled && (
         <Grid height={'10vh p-2'} item xs={8}>
           <div className="flex row justify-center">
@@ -166,8 +155,9 @@ function Room() {
       <div className="flex justify-center flex-end items-center absolute h-[90px] radius-[25px] w-full bottom-[0px] left-[0px] bg-black rounded-3xl">
         <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
         <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
+        <NoiseButton handleNoiseChange={handleNoiseChange} isNoiseSuppressionEnabled={isNoiseSuppressionEnabled}></NoiseButton>
         <ScreenSharingButton layout={mSubscriber.callLayout}></ScreenSharingButton>
-        <BlurButton publisher={mPublisher.publisher}></BlurButton>
+        {OT.hasMediaProcessorSupport() && <BlurButton publisher={mPublisher.publisher}></BlurButton>}
         <MoreButton subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
         {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}
         <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />

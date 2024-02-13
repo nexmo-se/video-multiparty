@@ -343,7 +343,11 @@ function WaitingRoom() {
                   <LinearProgress variant="determinate" value={logLevel}></LinearProgress>
                 </Box>
                 <VideoSettingsWaitingRoom hasVideo={localVideo} onVideoChange={handleVideoChange} />
-                <BlurSettings hasBlur={blur} onBlurChange={handleBlurChange} />
+                {OT.hasMediaProcessorSupport() ? (
+                  <BlurSettings hasBlur={blur} onBlurChange={handleBlurChange} />
+                ) : (
+                  'Blur not supported in your browser'
+                )}
 
                 <Button
                   onClick={handleJoinClick}

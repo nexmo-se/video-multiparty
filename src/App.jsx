@@ -15,20 +15,20 @@ import { UserProvider } from './Context/user';
 function App() {
   return (
     <Router>
-      <UserProvider>
-        <Routes>
-          <Route path="/waiting-room" element={<WaitingRoom />} />
-          <Route path="*" element={<WaitingRoom />} />
-          <Route
-            path="/room"
-            element={
-              <div className="">
-                <Room></Room>
-              </div>
-            }
-          />
-        </Routes>
-      </UserProvider>
+      {/* <UserProvider> */}
+      <Routes>
+        <Route path="/waiting-room" element={<WaitingRoom />} />
+        <Route path="*" element={<WaitingRoom />} />
+        <Route
+          path="/room"
+          element={
+            <div className="">
+              <Room></Room>
+            </div>
+          }
+        />
+      </Routes>
+      {/* </UserProvider> */}
     </Router>
   );
 }

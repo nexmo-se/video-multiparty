@@ -21,41 +21,16 @@ import React from 'react';
 
 // import { UserContext } from '../../context/UserContext';
 
-export default function MoreButton({ subStats, rtcStats, stats, hasVideo }) {
-  const title = hasVideo ? 'Disable Camera' : 'More Settings';
-  const { deviceInfo } = useDevices();
-  const [devicesAvailable, setDevicesAvailable] = React.useState(null);
-  const [options, setOptions] = React.useState(['Network', 'Participants', 'Network-expanded']);
+export default function MoreButton({ subStats, rtcStats, stats }) {
+  const title = 'More options';
+  const [options, setOptions] = React.useState(['Report an issue', 'Participants', 'Network-expanded']);
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = React.useState(null);
   const [menuState, setMenuState] = React.useState(null);
   const [participantsMenuOpen, setParticipantsMenuOpen] = React.useState(false);
 
-  //   const { user } = React.useContext(UserContext);
-
-  //   React.useEffect(() => {
-  //     setDevicesAvailable(deviceInfo.videoInputDevices);
-  //     if (cameraPublishing) {
-  //       const currentDeviceId = getVideoSource()?.deviceId;
-
-  //       const IndexOfSelectedElement = devicesAvailable.indexOf(devicesAvailable.find((e) => e.deviceId === currentDeviceId));
-  //       setSelectedIndex(IndexOfSelectedElement);
-  //     }
-  //   }, [cameraPublishing, getVideoSource, deviceInfo, devicesAvailable]);
-
-  //   React.useEffect(() => {
-  //     if (devicesAvailable) {
-  //       const videoDevicesAvailable = devicesAvailable.map((e) => {
-  //         return e.label;
-  //       });
-  //       setOptions(videoDevicesAvailable);
-  //     }
-  //     // if (user.videoEffects.backgroundBlur)
-  //     //   setOptions(['Not available with Background Blurring']);
-  //   }, [devicesAvailable]);
-
-  const handleChangeVideoSource = (event, index) => {
+  const handleChangeMenu = (event, index) => {
     setSelectedIndex(index);
     if (index === 1) toggler();
 
@@ -103,46 +78,17 @@ export default function MoreButton({ subStats, rtcStats, stats, hasVideo }) {
             size="small"
             className={`h-[50px] m-[3px] w-[50px] background-white rounded-3xl color-white`}
           >
-            {!hasVideo ? <More /> : <VideoCam />}
+            <More />
           </IconButton>
         </Tooltip>
-        {/* <IconButton
-          size="small"
-          aria-controls={open ? 'split-button-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-label="select merge strategy"
-          aria-haspopup="menu"
-          //   onClick={handleToggle}
-          className="rounded-3xl h-[50px] w-[50px] bg-rose-50 "
-        >
-          <ArrowDropDown className="bg-rose-50" color="white" />
-        </IconButton> */}
       </ButtonGroup>
       {selectedIndex === 0 && (
-        // <ClickAwayListener onClickAway={handleClickAway}>
         <NetworkDetails handleExit={handleClickAway} subStats={subStats} rtcStats={rtcStats} stats={stats}></NetworkDetails>
-        // </ClickAwayListener>
       )}
-      {selectedIndex === 1 && (
-        // <ClickAwayListener onClickAway={handleClickAway}>
-        <Participants
-          // open={menuState === 'participants'}
-          toggler={toggler}
-          participantsMenuOpen={participantsMenuOpen}
-          // handleExit={handleClickAway}
-        ></Participants>
-        // </ClickAwayListener>
-      )}
+      {selectedIndex === 1 && <Participants toggler={toggler} participantsMenuOpen={participantsMenuOpen}></Participants>}
       {selectedIndex === 2 && <Test handleExit={handleClickAway} subStats={subStats} rtcStats={rtcStats} stats={stats}></Test>}
 
-      <Popper
-        open={open}
-        anchorEl={anchorRef.current}
-        role={undefined}
-        transition
-        disablePortal
-        style={{ zIndex: 101 }} // todo temporary fix for a bug in MP 0.1.5
-      >
+      <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{ zIndex: 101 }}>
         {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
@@ -157,7 +103,7 @@ export default function MoreButton({ subStats, rtcStats, stats, hasVideo }) {
                     <MenuItem
                       key={option}
                       selected={index === selectedIndex}
-                      onClick={(event) => handleChangeVideoSource(event, index)}
+                      onClick={(event) => handleChangeMenu(event, index)}
                       className="background-black"
                       // disabled={user.videoEffects.backgroundBlur}
                     >

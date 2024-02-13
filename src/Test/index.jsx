@@ -15,11 +15,11 @@ import { ClickAwayListener } from '@mui/material';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import VpnLockIcon from '@mui/icons-material/VpnLock';
 import Tooltip from '@mui/material/Tooltip';
+import TuneIcon from '@mui/icons-material/Tune';
 
 import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import SignalWifi1BarIcon from '@mui/icons-material/SignalWifi1Bar';
 import { CloudUpload } from '@mui/icons-material';
-import { GridLoadingOverlay } from '@mui/x-data-grid';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -48,31 +48,26 @@ function a11yProps(index) {
   };
 }
 
-export default function Test({ handleExit, substats, rtcStats, stats }) {
+export default function Test({ handleExit, subStats, rtcStats, stats }) {
   const [value, setValue] = React.useState(0);
-  const [bitRate, setBitRate] = React.useState([]);
-  const [resolution, setResolution] = React.useState(null);
-  const [fps, setFps] = React.useState(null);
-  const [packetLoss, setPacketLoss] = React.useState(null);
-  const [protocol, setProtocol] = React.useState(null);
+  // const [bitRate, setBitRate] = React.useState([]);
+  // const [resolution, setResolution] = React.useState(null);
+  // const [fps, setFps] = React.useState(null);
+  // const [packetLoss, setPacketLoss] = React.useState(null);
+  // const [protocol, setProtocol] = React.useState(null);
   const [layers, setLayers] = React.useState(null);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  React.useEffect(() => {
-    if (stats && stats.bandwidth && stats.bandwidth > 0) {
-      console.log(stats);
-      console.log(rtcStats);
-      const bitRate = stats.bandwidth;
-      setBitRate((prevbitrate) => [...prevbitrate, bitRate]);
-      setResolution(`${stats.width}X${stats.height}`);
-      setFps(stats.frameRate);
-      setPacketLoss(stats.packetLoss);
-      setLayers(stats.simulcastLayers);
-    }
-  }, [stats, rtcStats]);
+  // React.useEffect(() => {
+  //   if (stats && stats.bandwidth && stats.bandwidth > 0) {
+  //     // setBitRate((prevbitrate) => [...prevbitrate, bitRate]);
+
+  //     setLayers(stats.simulcastLayers);
+  //   }
+  // }, [stats, rtcStats]);
 
   return (
     <ClickAwayListener onClickAway={handleExit}>
@@ -86,12 +81,6 @@ export default function Test({ handleExit, substats, rtcStats, stats }) {
 
         {stats && (
           <CustomTabPanel value={value} index={0}>
-            {/* <div className="flex">
-            <Tooltip title="This is ratio of packet loss">
-              <SignalWifi1BarIcon></SignalWifi1BarIcon>
-              <span> {`Packet loss: ${stats.packetLoss}`}</span>
-            </Tooltip>
-          </div> */}
             <List>
               <ListItem>
                 <ListItemButton variant="outlined">
@@ -99,7 +88,7 @@ export default function Test({ handleExit, substats, rtcStats, stats }) {
 
                   <Tooltip title="This is ratio of packet loss">
                     <SignalWifi1BarIcon></SignalWifi1BarIcon>
-                    <span> {`Packet loss: ${stats.packetLoss}`}</span>
+                    <span> {`Packet loss: ${stats.packetLoss * 100} %`}</span>
                   </Tooltip>
                 </ListItemButton>
               </ListItem>
@@ -125,7 +114,6 @@ export default function Test({ handleExit, substats, rtcStats, stats }) {
                     <span> {`Candidate type: ${stats.candidateType}`}</span>
                   </Tooltip>
                 </ListItemButton>
-                {/* <ListItemDecorator></ListItemDecorator> */}
               </ListItem>
               <ListItem>
                 <ListItemButton variant="outlined">
@@ -138,8 +126,8 @@ export default function Test({ handleExit, substats, rtcStats, stats }) {
                 </ListItemButton>
               </ListItem>
               <h1 className="self-center">Layers</h1>
-              {layers &&
-                layers.map((layer) => (
+              {stats.simulcastLayers &&
+                stats.simulcastLayers.map((layer) => (
                   <div>
                     <Tooltip title="These are the simulcast layers">
                       <AspectRatioIcon></AspectRatioIcon>
@@ -159,6 +147,18 @@ export default function Test({ handleExit, substats, rtcStats, stats }) {
                   </Tooltip>
                 </ListItemButton>
               </ListItem>
+              {subStats && (
+                <ListItem>
+                  <ListItemButton variant="outlined">
+                    <ListItemDecorator></ListItemDecorator>
+
+                    <Tooltip title="This is the upload bandwidth">
+                      <CloudUpload></CloudUpload>
+                      <span> {`Bandwidth  : ${subStats.vbw} Kbps`}</span>
+                    </Tooltip>
+                  </ListItemButton>
+                </ListItem>
+              )}
               <ListItem>
                 <ListItemButton variant="outlined">
                   <ListItemDecorator></ListItemDecorator>
@@ -205,30 +205,6 @@ export default function Test({ handleExit, substats, rtcStats, stats }) {
                 </ListItemButton>
               </ListItem>
             </List>
-
-            {/* <div className="flex">
-            <Tooltip title="This is Codec">
-              <VpnLockIcon></VpnLockIcon>
-              <span> {`Video Codec : ${stats.codec}`}</span>
-            </Tooltip>
-          </div> */}
-            {/* <div className="flex">
-            <Tooltip title="This is ratio of packet loss">
-              <SignalWifi1BarIcon></SignalWifi1BarIcon>
-              <span> {`Candidate type: ${stats.candidateType}`}</span>
-            </Tooltip>
-          </div> */}
-            {/* <div className="flex">
-            <Tooltip title="This is upload bandwidth">
-              <span> {`BW: ${stats.bandwidth} Kbps`}</span>
-            </Tooltip>
-          </div> */}
-            {/* <div className="flex">
-            <Tooltip title="This is protocol you are using to send Media.">
-              <CloudDownloadIcon></CloudDownloadIcon>
-              <span> {`Media Protocol: ${stats.protocol}`}</span>
-            </Tooltip>
-          </div> */}
           </CustomTabPanel>
         )}
         {!stats && (
@@ -238,39 +214,57 @@ export default function Test({ handleExit, substats, rtcStats, stats }) {
         )}
 
         <CustomTabPanel value={value} index={1}>
-          <div className="flex">
-            <Tooltip title="This is Codec">
-              <VpnLockIcon></VpnLockIcon>
-              <span> {`Audio Codec : ${stats?.audioCodec}`}</span>
-            </Tooltip>
-          </div>
-          <div className="flex">
-            <Tooltip title="This is Codec">
-              <SignalWifi1BarIcon></SignalWifi1BarIcon>
-              <span> {`Jitter : ${stats?.jitterAudio}`}</span>
-            </Tooltip>
-          </div>
-          <div className="flex">
-            <Tooltip title="This is Codec">
-              <SignalWifi1BarIcon></SignalWifi1BarIcon>
-              <span> {`Audio Packet loss : ${stats?.audioPacketLoss}`}</span>
-            </Tooltip>
-          </div>
-          <div className="flex">
-            <Tooltip title="This is Codec">
-              <VpnLockIcon></VpnLockIcon>
-              <span> {`Audio Bandwidth : ${stats?.audioBandwidth}`}</span>
-            </Tooltip>
-          </div>
-          <div className="flex">
-            <Tooltip title="This setting is useful for large calls with many audio participants">
-              <VpnLockIcon></VpnLockIcon>
-              <span> {`DTX : false`}</span>
-            </Tooltip>
-          </div>
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={2}>
-          Item Three
+          <List>
+            <ListItem>
+              <ListItemButton variant="outlined">
+                <ListItemDecorator></ListItemDecorator>
+
+                <Tooltip title="Audio codec">
+                  {/* <CloudUpload></CloudUpload> */}
+                  <span> {`Audio Codec : ${stats?.audioCodec}`}</span>
+                </Tooltip>
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton variant="outlined">
+                <ListItemDecorator></ListItemDecorator>
+
+                <Tooltip title="Jitter audio">
+                  <SignalWifi1BarIcon></SignalWifi1BarIcon>
+                  <span> {`Jitter : ${stats?.jitterAudio}`}</span>
+                </Tooltip>
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton variant="outlined">
+                <ListItemDecorator></ListItemDecorator>
+
+                <Tooltip title="Audio packet loss">
+                  <SignalWifi1BarIcon></SignalWifi1BarIcon>
+                  <span> {`Audio Packet loss : ${stats?.audioPacketLoss}`}</span>
+                </Tooltip>
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton variant="outlined">
+                <ListItemDecorator></ListItemDecorator>
+
+                <Tooltip title="Audio bandwidth">
+                  <CloudUpload></CloudUpload>
+                  <span> {`Audio Bandwidth : ${stats?.audioBandwidth} Kbps`}</span>
+                </Tooltip>
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton variant="outlined">
+                <ListItemDecorator></ListItemDecorator>
+
+                <Tooltip title="This setting is useful for large calls with many audio participants">
+                  <span> {`DTX enabled : false`}</span>
+                </Tooltip>
+              </ListItemButton>
+            </ListItem>
+          </List>
         </CustomTabPanel>
       </Card>
     </ClickAwayListener>

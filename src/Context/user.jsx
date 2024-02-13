@@ -14,15 +14,19 @@ export function UserProvider({ children }) {
       name: username,
       blur: false,
     },
+    issues: {
+      reconnections: 0,
+      audioFallbacks: 0,
+    },
   });
 
-  const value = useMemo(
-    () => ({
-      user,
-      setUser,
-    }),
-    [user]
-  );
+  // const value = useMemo(
+  //   () => ({
+  //     user,
+  //     setUser,
+  //   }),
+  //   [user]
+  // );
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 }

@@ -25,7 +25,7 @@ function SessionProvider({ children }) {
   //   const navigate = useNavigate();
   // const [session, setSession] = useState();
   const [messages, setMessages] = useState([{ from: 'App', text: 'You can use the chat to say something nice' }]);
-  // const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [streams, setStreams] = useState([]);
   const [changedStream, setChangedStream] = useState();
   const [connections, setConnections] = useState([]);
@@ -123,6 +123,11 @@ function SessionProvider({ children }) {
   }
 
   function handleReconnecting() {
+    console.log(user);
+    if (user) {
+      user.issues.reconnections++;
+    }
+
     setReconnecting(true);
   }
   function handleReconnected() {
