@@ -2,7 +2,7 @@ import { createContext, useState, useMemo } from 'react';
 
 export const UserContext = createContext();
 
-export function UserProvider({ children }) {
+function UserProvider({ children }) {
   var username = localStorage.getItem('username') || `User-${Date.now()}`;
   // For EC-Render clients
 
@@ -30,3 +30,4 @@ export function UserProvider({ children }) {
 
   return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 }
+export default UserProvider;

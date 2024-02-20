@@ -2,19 +2,22 @@
 import { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import LayoutManager from '../utils/layout-manager';
 import OT from '@opentok/client';
-import OTStats from '../utils/stats';
-// import delay from 'delay';
+
 import { SessionContext } from '../Context/session';
 import { getInitials } from '../util';
 import { UserContext } from '../Context/user';
+import { useStatsContext } from '../Context/stats';
+// import { useLayoutManager } from '../Context/layout';
 
 function usePublisher(containerId, displayName = true) {
+  //  const layoutManager = useLayoutManager();
   const DFT_PUBLISHER_OPTIONS = {
     insertMode: 'append',
     width: '100%',
     height: '100%',
     // fitMode: 'contain',
   };
+  const stats = useStatsContext();
   const { user } = useContext(UserContext);
   //   const OTStats = useRef(null);
   const publisher = useRef(null);
@@ -22,9 +25,9 @@ function usePublisher(containerId, displayName = true) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publisherOptions, setPublisherOptions] = useState();
   const [stream, setStream] = useState();
+  // const [layoutManager, setLayoutManager] = useState(useLayoutManager());
   const [layoutManager, setLayoutManager] = useState(new LayoutManager(containerId));
   const mSession = useContext(SessionContext);
-  const stats = OTStats();
   const [simulcastLayers, setSimulcastLayers] = useState(null);
   const [getStats, setStats] = useState(null);
   function handleDestroyed() {
@@ -64,6 +67,7 @@ function usePublisher(containerId, displayName = true) {
 
   function handleVideoDisabled() {
     setQuality('bad');
+    user.issues.audioFallbacks++;
   }
 
   function handleVideoEnabled() {
@@ -77,60 +81,6 @@ function usePublisher(containerId, displayName = true) {
   function handleVideoWarningLifted() {
     setQuality('good');
   }
-
-  const getRtcStats = useCallback(async () => {
-    if (publisher.current) {
-      let prevTimeStamp = null;
-      let protocol = null;
-      let prevPacketsSent = null;
-      let connectionType = null;
-      let prevBytesSent = null;
-      let simulcastLayers = [];
-      try {
-        const stats = await publisher.current.getRtcStatsReport();
-
-        // setRtt([]);
-        stats[0].rtcStatsReport.forEach((e) => {
-          if (e.type === 'local-candidate') {
-            if (e.networkType === 'vpn') setHasVPN(true);
-            connectionType = e.networkType;
-            // setConnectionType(e.networkType);
-            if (e.candidateType === 'relay') {
-              //   setProtocol(`TURN ${e.relayProtocol}`);
-              protocol = `TURN ${e.relayProtocol}`;
-              //   setIp({ ip: e.ip, type: 'relay' });
-            } else {
-              protocol = e.protocol;
-              //   setProtocol(e.protocol);
-            }
-          }
-
-          if (e.type === 'outbound-rtp' && e.kind === 'video' && e.frameHeight && e.frameWidth && e.bytesSent) {
-            // Rest of the loop for subsequent iterations
-
-            const newLayers = {
-              width: e.frameWidth,
-              height: e.frameHeight,
-              framesPerSecond: e.framesPerSecond,
-              qualityLimitationReason: e.qualityLimitationReason,
-              id: e.ssrc,
-            };
-
-            simulcastLayers = [...simulcastLayers, newLayers];
-          }
-        });
-
-        return {
-          simulcastLayers,
-          protocol,
-        };
-
-        /* setIsScreenSharing(true); */
-      } catch (e) {
-        console.log('[useRtcStats] -  error:', e);
-      }
-    }
-  }, [publisher.current]);
 
   function insertWifiIcon(targetSubscriber, targetDom) {
     if (document.getElementById(`${targetSubscriber.id}-mute`)) return;
@@ -149,6 +99,15 @@ function usePublisher(containerId, displayName = true) {
     </div>`;
     targetDom.insertAdjacentHTML('beforeend', childNodeStr);
   }
+
+  // useEffect(() => {
+  //   if (!containerId) return;
+
+  //   const manager = new LayoutManager(containerId, null);
+  //   setLayoutManager(manager);
+  //   manager.init();
+  //   // Replace with your actual container ID
+  // }, [layoutManager, containerId]);
 
   const initPublisher = useCallback((container, publisherOptions) => {
     console.log(publisherOptions);
@@ -247,6 +206,9 @@ function usePublisher(containerId, displayName = true) {
         publishAudio: user.defaultSettings.publishAudio,
         publishVideo: user.defaultSettings.publishVideo,
         initials: getInitials(name),
+        audioFallback: {
+          publisher: true,
+        },
         style: {
           buttonDisplayMode: 'off',
           nameDisplayMode: displayName ? 'on' : 'off',
@@ -284,7 +246,6 @@ function usePublisher(containerId, displayName = true) {
     publish,
     publisher: publisher.current,
     getStats,
-    getRtcStats,
     simulcastLayers,
     initPublisher,
     destroyPublisher,

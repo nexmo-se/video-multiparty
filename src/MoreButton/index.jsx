@@ -11,9 +11,9 @@ import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import { MenuItem, MenuList } from '@mui/material';
-import NetworkDetails from '../NetworkDetails';
+import ReportIssue from '../ReportIssue';
 import Participants from '../Participants';
-import Test from '../Test';
+import NetworkDetails from '../NetworkDetails';
 
 // import MenuItem from '@material-ui/core/MenuItem';
 // import MenuList from '@material-ui/core/MenuList';
@@ -82,11 +82,9 @@ export default function MoreButton({ subStats, rtcStats, stats }) {
           </IconButton>
         </Tooltip>
       </ButtonGroup>
-      {selectedIndex === 0 && (
-        <NetworkDetails handleExit={handleClickAway} subStats={subStats} rtcStats={rtcStats} stats={stats}></NetworkDetails>
-      )}
+      {selectedIndex === 0 && <ReportIssue handleExit={handleClickAway} subStats={subStats} stats={stats}></ReportIssue>}
       {selectedIndex === 1 && <Participants toggler={toggler} participantsMenuOpen={participantsMenuOpen}></Participants>}
-      {selectedIndex === 2 && <Test handleExit={handleClickAway} subStats={subStats} rtcStats={rtcStats} stats={stats}></Test>}
+      {selectedIndex === 2 && <NetworkDetails handleExit={handleClickAway} subStats={subStats} stats={stats}></NetworkDetails>}
 
       <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{ zIndex: 101 }}>
         {({ TransitionProps, placement }) => (

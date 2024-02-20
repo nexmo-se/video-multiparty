@@ -1,0 +1,17 @@
+project:
+  name: multiparty-app
+instance:
+  name: dev
+  runtime: nodejs18
+  region: aws.euw1
+  application-id: 4c10c476-8487-45f2-b40e-2eb870929297
+  entrypoint: [npm, start]
+  capabilities:
+    - video
+  environment:
+    - name: VONAGE_NUMBER
+      value: '44700000000'
+entrypoint: [npm, start]
+debug:
+  name: debug
+  entrypoint: [npm, start]

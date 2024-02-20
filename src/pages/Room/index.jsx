@@ -23,6 +23,7 @@ import Chat from '../../Chat';
 import BlurButton from '../../BlurButton';
 import NoiseButton from '../../NoiseButton';
 import { useMediaProcessor } from '../../hooks/mediaProcessor';
+// import { useLayoutManager } from '../../Context/layout';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -34,6 +35,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function Room() {
   const { processor, connector } = useMediaProcessor();
+  // const [layoutManager, setLayoutManager] = useState(useLayoutManager());
   const { user } = useContext(UserContext);
   const wrapRef = useRef(null);
   const resizeTimerRef = useRef();
@@ -158,7 +160,7 @@ function Room() {
         <NoiseButton handleNoiseChange={handleNoiseChange} isNoiseSuppressionEnabled={isNoiseSuppressionEnabled}></NoiseButton>
         <ScreenSharingButton layout={mSubscriber.callLayout}></ScreenSharingButton>
         {OT.hasMediaProcessorSupport() && <BlurButton publisher={mPublisher.publisher}></BlurButton>}
-        <MoreButton subStats={mSubscriber.aggregateStats} rtcStats={mPublisher.getRtcStats} stats={mPublisher.getStats} />
+        <MoreButton subStats={mSubscriber.aggregateStats} stats={mPublisher.getStats} />
         {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}
         <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />
       </div>

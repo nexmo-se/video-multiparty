@@ -20,17 +20,14 @@ import { SessionContext } from '../Context/session';
 import React from 'react';
 import { useContext } from 'react';
 
-import { UserContext } from '../context/user';
-
 export default function ScreenSharingButton({ layout }) {
-  const { user } = React.useContext(UserContext);
   const { session } = useContext(SessionContext);
   const screnSharingPub = React.useRef(null);
 
   const anchorRef = React.useRef(null);
-  const [audio, setHasAudio] = React.useState(user.defaultSettings.publishAudio);
-  const title = audio ? 'Start screen share' : 'Stop screen share';
+
   const [sharing, setSharing] = React.useState(false);
+  const title = sharing ? 'Stop screen share' : 'Start screen share';
 
   async function toggleShareScreenClick() {
     console.log(session);

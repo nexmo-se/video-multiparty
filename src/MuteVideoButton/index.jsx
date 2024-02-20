@@ -17,7 +17,7 @@ import { MenuItem, MenuList } from '@mui/material';
 import React from 'react';
 import { useState } from 'react';
 
-import { UserContext } from '../context/user';
+import { UserContext } from '../Context/user';
 
 export default function MuteVideoButton({ publisher }) {
   const { user } = React.useContext(UserContext);

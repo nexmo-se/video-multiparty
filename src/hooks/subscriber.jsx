@@ -3,11 +3,12 @@
 import { SessionContext } from '../Context/session';
 import { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import LayoutManager from '../utils/layout-manager';
-import OTStats from '../utils/stats';
 import { SubscriberContext } from '../Context/subscriber';
+import { useStatsContext } from '../Context/stats';
 
 function useSubscriber({ call, monitor }) {
-  const stats = useRef(null);
+  const stats = useStatsContext();
+  // const stats = useRef(null);
 
   const [subscribed, setSubscribed] = useState([]);
   const [monitoringStats, setMonitoringStats] = useState(false);
@@ -21,76 +22,20 @@ function useSubscriber({ call, monitor }) {
   const [monitorLayout, setMonitorLayout] = useState(new LayoutManager(monitor));
   const mSession = useContext(SessionContext);
   const [aggregateStats, setAggregateStats] = useState(null);
-  // const { subscribers, setSubscribers } = useContext(SubscriberContext);
-  //   const mMessage = useContext(MessageContext);
-
-  // useEffect(() => {
-  //   if (stats.current) {
-  //     stats.current.setOnAggregateStatsAvailableListener(handleAggregateStatsListener);
-  //     stats.current.setSubscriberOnStatsAvailableListener(onSubscriberStatsAvailable);
-  //   }
-  // }, [stats.current]);
-
-  // useEffect(() => {
-  //   if (callSubscribers.length > 0)
-  //   // console.log(SubscriberContext);
-  //   // console.log(mSubscriber);
-  // }, [callSubscribers]);
-
-  // useEffect(() => {
-  //   if (!monitoringStats && callSubscribers.length > 0) {
-  //     // callSubscribers.forEach((subscriber) => {
-  //     //   stats.addSubscriber(subscriber);
-  //     // });
-  //     stats.current.start();
-  //     setMonitoringStats(true);
-  //   }
-  // }, [monitoringStats, callSubscribers]);
-
-  useEffect(() => {
-    if (!stats.current) {
-      stats.current = OTStats();
-    }
-  }, []);
 
   useEffect(() => {
     if (!mSession.subscribers) return;
-    if (mSession.subscribers.length > 0 && stats.current) {
-      stats.current.stop();
-      stats.current = null;
-      stats.current = OTStats();
-      stats.current.setOnAggregateStatsAvailableListener(handleAggregateStatsListener);
-      stats.current.setSubscriberOnStatsAvailableListener(onSubscriberStatsAvailable);
+    if (mSession.subscribers.length > 0 && stats) {
+      stats.stop();
 
-      window.stats = stats.current;
+      stats.setOnAggregateStatsAvailableListener(handleAggregateStatsListener);
+      stats.setSubscriberOnStatsAvailableListener(onSubscriberStatsAvailable);
 
       console.log('adding sub');
-      mSession.subscribers.forEach((sub) => stats.current.addSubscriber(sub));
-      stats.current.start();
+      mSession.subscribers.forEach((sub) => stats.addSubscriber(sub));
+      stats.start();
     }
   }, [mSession.subscribers]);
-
-  // useEffect(() => {
-  //   if (!mSession.changedStream) return;
-  //   // Ensure cover the stream that doesnt trigger changedStream event
-  //   const targetCallSubscriber = callSubscribers.find((subscriber) => mSession.changedStream.stream.id === subscriber.stream.id);
-
-  //   updateMuteIconVisibility(targetCallSubscriber, mSession.changedStream.stream);
-  // }, [mSession.changedStream]);
-
-  // function updateMuteIconVisibility(subscriber, stream, forceMute = false) {
-  //   if (!subscriber) return;
-  //   let mute = true;
-  //   if ((stream && stream.hasAudio) || (!stream && !forceMute)) mute = false;
-
-  //   if (mute) {
-  //     const targetDom = document.getElementById(subscriber.id);
-  //     if (targetDom) insertMuteIcon(subscriber, targetDom);
-  //   } else {
-  //     const targetDom = document.getElementById(`${subscriber.id}-mute`);
-  //     if (targetDom) targetDom.remove();
-  //   }
-  // }
 
   function insertMuteIcon(targetSubscriber, targetDom) {
     if (document.getElementById(`${targetSubscriber.id}-mute`)) return;
@@ -154,16 +99,6 @@ function useSubscriber({ call, monitor }) {
   function onSubscriberStatsAvailable(stats) {
     console.log(stats);
   }
-
-  //   useEffect(() => {
-  //     // if (handleAggregateStatsListener) {
-  //     if (callSubscribers.length > 0) {
-  //       stats.setOnAggregateStatsAvailableListener(handleAggregateStatsListener);
-  //       stats.setSubscriberOnStatsAvailableListener(onSubscriberStatsAvailable);
-  //       stats.start();
-  //     }
-  //     // }
-  //   }, [callSubscribers]);
 
   // async function subscribeSingleStream(stream) {
   //   if (!stream) return;

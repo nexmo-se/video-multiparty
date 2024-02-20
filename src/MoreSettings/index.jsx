@@ -5,11 +5,11 @@ import Menu from '@mui/joy/Menu';
 import MenuButton from '@mui/joy/MenuButton';
 import MenuItem from '@mui/joy/MenuItem';
 import MoreVert from '@mui/icons-material/MoreVert';
-import NetworkDetails from '../NetworkDetails';
+import ReportIssue from '../ReportIssue';
 import Participants from '../Participants';
 import { ClickAwayListener } from '@mui/material';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import Test from '../Test/index';
+import NetworkDetails from '../NetworkDetails/index';
 function MoreSettings({ subStats, rtcStats, stats }) {
   const [menuState, setMenuState] = React.useState(null);
   const [participantsMenuOpen, setParticipantsMenuOpen] = React.useState(false);
@@ -61,7 +61,7 @@ function MoreSettings({ subStats, rtcStats, stats }) {
       </Dropdown>
       {menuState === 'network' && (
         <ClickAwayListener onClickAway={handleClickAway}>
-          <NetworkDetails handleExit={handleClickAway} subStats={subStats} rtcStats={rtcStats} stats={stats}></NetworkDetails>
+          <ReportIssue handleExit={handleClickAway} subStats={subStats} rtcStats={rtcStats} stats={stats}></ReportIssue>
         </ClickAwayListener>
       )}
       {menuState === 'participants' && (
@@ -74,7 +74,7 @@ function MoreSettings({ subStats, rtcStats, stats }) {
         ></Participants>
         // </ClickAwayListener>
       )}
-      {menuState === 'participants-expanded' && <Test subStats={subStats} rtcStats={rtcStats} stats={stats}></Test>}
+      {menuState === 'participants-expanded' && <NetworkDetails subStats={subStats} rtcStats={rtcStats} stats={stats}></NetworkDetails>}
     </>
   );
 }

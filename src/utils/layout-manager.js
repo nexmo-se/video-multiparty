@@ -11,11 +11,21 @@ class LayoutManager {
     const element = document.getElementById(this.container);
     if (element)
       this.manager = LM(element, {
-        fixedRatio: true,
-        scaleLastRow: false,
-        bigFirst: false,
-        bigFixedRatio: true,
-        bigAlignItems: 'left',
+        fixedRatio: false,
+        alignItems: 'center',
+        bigPercentage: 0.8,
+        bigFixedRatio: false,
+        bigAlignItems: 'center',
+        smallAlignItems: 'center',
+        maxWidth: Infinity,
+        maxHeight: Infinity,
+        smallMaxWidth: Infinity,
+        smallMaxHeight: Infinity,
+        bigMaxWidth: Infinity,
+        bigMaxHeight: Infinity,
+        bigMaxRatio: 3 / 2,
+        bigMinRatio: 9 / 16,
+        bigFirst: true,
       });
     else throw new Error('Cannot find container');
   }

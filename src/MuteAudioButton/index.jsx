@@ -17,7 +17,7 @@ import { MenuItem, MenuList } from '@mui/material';
 // import MenuList from '@material-ui/core/MenuList';
 import React from 'react';
 
-import { UserContext } from '../context/user';
+import { UserContext } from '../Context/user';
 
 export default function MuteAudioButton({ publisher }) {
   const { user } = React.useContext(UserContext);
