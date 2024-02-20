@@ -16,11 +16,6 @@ const call = 'video-container';
 function SessionProvider({ children }) {
   const [callLayout, setCalLayout] = useState(new LayoutManager(call));
   // const [callLayout, setCalLayout] = useState(useLayoutManager());
-
-  const mSubscriber = useSubscriber({
-    call: 'video-container',
-  });
-
   const [subscribers, setSubscribers] = useState([]);
   const [reconnecting, setReconnecting] = useState(false);
 

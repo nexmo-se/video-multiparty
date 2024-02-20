@@ -23,7 +23,6 @@ import Chat from '../../components/Chat';
 import BlurButton from '../../components/BlurButton';
 import NoiseButton from '../../components/NoiseButton';
 import { useMediaProcessor } from '../../hooks/mediaProcessor';
-// import { useLayoutManager } from '../../Context/layout';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -40,9 +39,7 @@ function Room() {
   const wrapRef = useRef(null);
   const resizeTimerRef = useRef();
   const mPublisher = usePublisher('video-container');
-  const mSubscriber = useSubscriber({
-    call: 'video-container',
-  });
+  const mSubscriber = useSubscriber();
   const [isNoiseSuppressionEnabled, setNoiseSuppression] = useState(false);
   const mSession = useContext(SessionContext);
   const [chatOpen, setChatOpen] = useState(false);
@@ -89,7 +86,7 @@ function Room() {
         mutations.forEach((mu) => {
           console.log('calling layout');
           if (mu.type !== 'attributes' && mu.attributeName !== 'class') return;
-          mSubscriber.callLayout.layout();
+          mPublisher.callLayout.layout();
         });
       });
       attrObserver.observe(container, { attributes: true });
@@ -100,12 +97,12 @@ function Room() {
 
   useEffect(() => {
     // if (container) setLayoutContainer(initLayoutContainer(container));
-    if (mSubscriber.callLayout)
+    if (mPublisher.callLayout)
       window.onresize = () => {
         clearTimeout(resizeTimerRef.current);
 
         resizeTimerRef.current = setTimeout(function () {
-          mSubscriber.callLayout.layout();
+          mPublisher.callLayout.layout();
           // if (container) setLayoutContainer(initLayoutContainer(container));
         }, 100);
       };
@@ -131,7 +128,7 @@ function Room() {
     } else {
       return;
     }
-    if (mSubscriber.callLayout) mSubscriber.callLayout.layout();
+    if (mPublisher.callLayout) mPublisher.callLayout.layout();
   }, [mSession.connected]);
 
   return (
@@ -158,7 +155,7 @@ function Room() {
         <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
         <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
         <NoiseButton handleNoiseChange={handleNoiseChange} isNoiseSuppressionEnabled={isNoiseSuppressionEnabled}></NoiseButton>
-        <ScreenSharingButton layout={mSubscriber.callLayout}></ScreenSharingButton>
+        <ScreenSharingButton layout={mPublisher.callLayout}></ScreenSharingButton>
         {OT.hasMediaProcessorSupport() && <BlurButton publisher={mPublisher.publisher}></BlurButton>}
         <MoreButton subStats={mSubscriber.aggregateStats} stats={mPublisher.getStats} />
         {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}

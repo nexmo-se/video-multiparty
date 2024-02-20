@@ -250,6 +250,7 @@ function usePublisher(containerId, displayName = true) {
     initPublisher,
     destroyPublisher,
     quality,
+    layoutManager,
   };
 }
 export default usePublisher;
