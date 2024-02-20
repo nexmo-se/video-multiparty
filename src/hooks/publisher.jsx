@@ -9,7 +9,7 @@ import { UserContext } from '../Context/user';
 import { useStatsContext } from '../Context/stats';
 // import { useLayoutManager } from '../Context/layout';
 
-function usePublisher(containerId, displayName = true) {
+function usePublisher(containerId, displayName = false) {
   //  const layoutManager = useLayoutManager();
   const DFT_PUBLISHER_OPTIONS = {
     insertMode: 'append',
@@ -99,15 +99,6 @@ function usePublisher(containerId, displayName = true) {
     </div>`;
     targetDom.insertAdjacentHTML('beforeend', childNodeStr);
   }
-
-  // useEffect(() => {
-  //   if (!containerId) return;
-
-  //   const manager = new LayoutManager(containerId, null);
-  //   setLayoutManager(manager);
-  //   manager.init();
-  //   // Replace with your actual container ID
-  // }, [layoutManager, containerId]);
 
   const initPublisher = useCallback((container, publisherOptions) => {
     console.log(publisherOptions);

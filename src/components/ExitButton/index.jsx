@@ -1,27 +1,30 @@
 import React from 'react';
-import ChatTwoToneIcon from '@mui/icons-material/ChatTwoTone';
 import { IconButton } from '@mui/material';
+import BlurOnIcon from '@mui/icons-material/BlurOn';
+import BlurOffIcon from '@mui/icons-material/BlurOff';
+import { UserContext } from '../../Context/user';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
+import LogoutIcon from '@mui/icons-material/Logout';
+function index() {
+  const { user } = React.useContext(UserContext);
 
-function index({ handleClick }) {
   return (
     <ButtonGroup
-      className="m-2 bg-rose-50 absolute left-[50px]"
+      className="m-2 bg-rose-50 absolute right-[10px]"
       disableElevation
       sx={{ borderRadius: '30px' }}
       variant="contained"
       aria-label="split button"
     >
-      <Tooltip title="Open chat" aria-label="add">
+      <Tooltip title="Exit meeting" aria-label="add">
         <IconButton
-          onClick={handleClick}
           edge="start"
           aria-label="videoCamera"
           size="small"
           className={`h-[50px] m-[3px] w-[50px] background-white rounded-3xl color-white`}
         >
-          <ChatTwoToneIcon></ChatTwoToneIcon>
+          <LogoutIcon fontSize="large"></LogoutIcon>
         </IconButton>
       </Tooltip>
     </ButtonGroup>

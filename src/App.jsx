@@ -9,7 +9,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 // import { RoomProvider } from './Context/RoomContext';
 import { BrowserRouter as Router, Route, Navigate, Routes } from 'react-router-dom';
-import WaitingRoom from './components/WaitingRoom';
+import WaitingRoom from './pages/WaitingRoom';
 import UserProvider from './Context/user';
 import SessionProvider from './Context/session';
 import { StatsProvider } from './Context/stats';

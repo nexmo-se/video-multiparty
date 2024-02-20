@@ -7,6 +7,24 @@
   height: 100vh;
 }
 
+.ot-layout {
+  opacity: 1;
+}
+.OT_publisher {
+  margin: 4;
+  border-radius: 16;
+
+  -webkit-backface-visibility: 'hidden';
+  -webkit-transform: 'translate3d(0, 0, 0)';
+}
+.subscriber {
+  margin: 4;
+  border-radius: 16;
+
+  -webkit-backface-visibility: 'hidden';
+  -webkit-transform: 'translate3d(0, 0, 0)';
+}
+
 #video-container > * {
   border: 3px solid black !important;
   border-radius: 20px;

@@ -8,9 +8,11 @@ import { useState } from 'react';
 import { ClickAwayListener, IconButton, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
+import { reportIssue } from '../../api/reportIssue';
 
 import Tooltip from '@mui/material/Tooltip';
 import { UserContext } from '../../Context/user';
+import OT from '@opentok/client';
 
 import Rating from '@mui/material/Rating';
 
@@ -18,25 +20,49 @@ import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 
 function NetworkDetails({ subStats, stats, handleExit, rtcStats }) {
-  const [bitRate, setBitRate] = React.useState([]);
-  const [resolution, setResolution] = React.useState(null);
-  const [fps, setFps] = React.useState(null);
-  const [packetLoss, setPacketLoss] = React.useState(null);
-  const [protocol, setProtocol] = useState(null);
-  const [layers, setLayers] = useState(null);
-  const [value, setValue] = useState(4);
+  const [audioIssue, setAudioIssue] = React.useState(false);
+  const [videoIssue, setVideoIssue] = React.useState(false);
+  const [feedBack, setFeedBack] = useState('');
+
+  const [stars, setStars] = useState(4);
   const { user } = React.useContext(UserContext);
-  // React.useEffect(() => {
-  //   if (stats && stats.bandwidth && stats.bandwidth > 0) {
-  //     console.log(stats);
-  //     const bitRate = stats.bandwidth;
-  //     setBitRate((prevbitrate) => [...prevbitrate, bitRate]);
-  //     setResolution(`${stats.width}X${stats.height}`);
-  //     setFps(stats.frameRate);
-  //     setPacketLoss(stats.packetLoss);
-  //     setLayers(stats.simulcastLayers);
-  //   }
-  // }, [stats]);
+
+  const issueOT = () => {
+    return new Promise((res, rej) => {
+      OT.reportIssue(function (err, resp) {
+        if (err) rej(e);
+        else {
+          res(resp);
+        }
+      });
+    });
+  };
+
+  const handleReportIssue = async (e) => {
+    console.log('click reporting');
+    e.preventDefault();
+    const issueId = await issueOT();
+
+    const issue = {
+      stars: stars,
+      audioIssue,
+      videoIssue,
+      feedBack,
+      reconnections: user.issues.reconnections,
+      audioFallbacks: user.issues.audioFallbacks,
+      issueId: issueId,
+      user: user.defaultSettings.name,
+    };
+
+    const resp = reportIssue(issue);
+    // }
+    // });
+  };
+
+  const handleFeedback = (e) => {
+    if (!e) return;
+    setFeedBack(e.target.value);
+  };
 
   return (
     <ClickAwayListener onClickAway={handleExit}>
@@ -66,10 +92,18 @@ function NetworkDetails({ subStats, stats, handleExit, rtcStats }) {
           <span>Problem with Video</span>
           <Switch label="Problem with video" />
         </div>
-        <TextField id="outlined-multiline-static" label="Add any details" multiline rows={4} defaultValue="..." />
+        <TextField
+          onChange={handleFeedback}
+          value={feedBack}
+          id="outlined-multiline-static"
+          label="Add any details"
+          multiline
+          rows={4}
+          defaultValue="..."
+        />
         <Rating
           name="simple-controlled"
-          value={value}
+          value={stars}
           onChange={(event, newValue) => {
             setValue(newValue);
           }}
@@ -80,7 +114,7 @@ function NetworkDetails({ subStats, stats, handleExit, rtcStats }) {
             margin: 'auto',
           }}
         >
-          <Button>Send</Button>
+          <Button onClick={handleReportIssue}>Send</Button>
         </IconButton>
 
         {/* {bitRate && (

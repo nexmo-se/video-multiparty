@@ -22,6 +22,7 @@ import ConnectionAlert from '../../components/ConnectionAlert';
 import Chat from '../../components/Chat';
 import BlurButton from '../../components/BlurButton';
 import NoiseButton from '../../components/NoiseButton';
+import ExitButton from '../../components/ExitButton';
 import { useMediaProcessor } from '../../hooks/mediaProcessor';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -86,7 +87,7 @@ function Room() {
         mutations.forEach((mu) => {
           console.log('calling layout');
           if (mu.type !== 'attributes' && mu.attributeName !== 'class') return;
-          mPublisher.callLayout.layout();
+          mPublisher.layoutManager.layout();
         });
       });
       attrObserver.observe(container, { attributes: true });
@@ -97,12 +98,12 @@ function Room() {
 
   useEffect(() => {
     // if (container) setLayoutContainer(initLayoutContainer(container));
-    if (mPublisher.callLayout)
+    if (mPublisher.layoutManager)
       window.onresize = () => {
         clearTimeout(resizeTimerRef.current);
 
         resizeTimerRef.current = setTimeout(function () {
-          mPublisher.callLayout.layout();
+          mPublisher.layoutManager.layout();
           // if (container) setLayoutContainer(initLayoutContainer(container));
         }, 100);
       };
@@ -128,7 +129,7 @@ function Room() {
     } else {
       return;
     }
-    if (mPublisher.callLayout) mPublisher.callLayout.layout();
+    if (mPublisher.layoutManager) mPublisher.layoutManager.layout();
   }, [mSession.connected]);
 
   return (
@@ -151,7 +152,7 @@ function Room() {
           </div>
         </Grid>
       )}
-      <div className="flex justify-center flex-end items-center absolute h-[90px] radius-[25px] w-full bottom-[0px] left-[0px] bg-black rounded-3xl">
+      <div className="flex justify-center flex-end items-center absolute h-[90px] radius-[25px] w-full bottom-[0px] left-[0px] bg-black rounded-t-3xl">
         <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
         <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
         <NoiseButton handleNoiseChange={handleNoiseChange} isNoiseSuppressionEnabled={isNoiseSuppressionEnabled}></NoiseButton>
@@ -160,6 +161,7 @@ function Room() {
         <MoreButton subStats={mSubscriber.aggregateStats} stats={mPublisher.getStats} />
         {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}
         <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />
+        <ExitButton></ExitButton>
       </div>
       {mSession.reconnecting && <ConnectionAlert message1={'Lost connection'} message2={'Please verify your network connection'} />}
       {mPublisher.quality !== 'good' && (
