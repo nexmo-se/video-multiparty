@@ -2,7 +2,7 @@ import Videocam from '@mui/icons-material/Videocam';
 import More from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import useDevices from '../hooks/useDevices';
+import useDevices from '../../hooks/useDevices';
 
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { ArrowDropDown } from '@mui/icons-material';

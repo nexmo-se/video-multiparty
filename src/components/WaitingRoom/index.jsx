@@ -10,15 +10,15 @@ const DFT_PUBLISHER_OPTIONS = {
   publishVideo: true,
   // fitMode: 'contain',
 };
-import { getInitials } from '../util';
+import { getInitials } from '../../util';
 import Grid from '@mui/material/Grid';
-import { DEVICE_ACCESS_STATUS } from '../constants';
+import { DEVICE_ACCESS_STATUS } from '../../constants';
 import DeviceAccessAlert from '../DeviceAccessAlert';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import usePublisher from '../hooks/publisher';
+import usePublisher from '../../hooks/publisher';
 import List from '@mui/material/List';
 import Button from '@mui/material/Button';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -34,13 +34,13 @@ import VideoCall from '@mui/icons-material/VideoCall';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useEffect } from 'react';
-import useDevices from '../hooks/useDevices';
-import useSound from '../hooks/sound';
+import useDevices from '../../hooks/useDevices';
+import useSound from '../../hooks/sound';
 import { IconButton, LinearProgress } from '@mui/material';
 
 import AudioSettingsWaitingRoom from '../AudioSettingsWaitingRoom';
 import VideoSettingsWaitingRoom from '../VideoSettingsWaitingRoom';
-import { UserContext } from '../Context/user';
+import { UserContext } from '../../Context/user';
 
 import BlurSettings from '../BlurSettings';
 

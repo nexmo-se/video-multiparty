@@ -1,4 +1,4 @@
-import { DEVICE_ACCESS_STATUS } from './../constants';
+import { DEVICE_ACCESS_STATUS } from './../../constants';
 
 const askDeviceMessage = 'To join the video room, your browser will request access to your cam and mic.';
 const deniedDeviceMessage = 'It seems your browser is blocked from accessing your camera and/or microphone';

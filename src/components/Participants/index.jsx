@@ -18,7 +18,7 @@ import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import { ClickAwayListener, IconButton } from '@mui/material';
 // import { SubscriberContext } from '../Context/subscriber';
 import { useEffect, useContext } from 'react';
-import { SessionContext } from '../Context/session';
+import { SessionContext } from '../../Context/session';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 function Participants({ toggler, participantsMenuOpen }) {
   const { subscribers } = useContext(SessionContext);

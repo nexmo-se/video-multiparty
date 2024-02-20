@@ -10,10 +10,10 @@ import Avatar from '@mui/joy/Avatar';
 import Box from '@mui/joy/Box';
 import Input from '@mui/joy/Input';
 import Button from '@mui/material/Button';
-import { useChat } from '../hooks/chat';
-import { SessionContext } from '../Context/session';
-import { UserContext } from '../Context/user';
-import { getInitials } from '../util';
+import { useChat } from '../../hooks/chat';
+import { SessionContext } from '../../Context/session';
+import { UserContext } from '../../Context/user';
+import { getInitials } from '../../util';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,

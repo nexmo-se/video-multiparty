@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 
 import Tooltip from '@mui/material/Tooltip';
-import { UserContext } from '../Context/user';
+import { UserContext } from '../../Context/user';
 
 import Rating from '@mui/material/Rating';
 

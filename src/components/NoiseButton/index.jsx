@@ -2,7 +2,7 @@ import React from 'react';
 import { IconButton } from '@mui/material';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
 import BlurOffIcon from '@mui/icons-material/BlurOff';
-import { UserContext } from '../Context/user';
+import { UserContext } from '../../Context/user';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import NoiseAwareIcon from '@mui/icons-material/NoiseAware';

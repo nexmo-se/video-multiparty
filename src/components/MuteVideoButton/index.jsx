@@ -1,12 +1,11 @@
 import Videocam from '@mui/icons-material/Videocam';
-import Mic from '@mui/icons-material/MicNone';
-
+import VideocamOff from '@mui/icons-material//VideocamOff';
 import { IconButton } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import useDevices from '../hooks/useDevices';
+import useDevices from '../../hooks/useDevices';
 
 import ButtonGroup from '@mui/material/ButtonGroup';
-import { ArrowDropDown, MicOff } from '@mui/icons-material';
+import { ArrowDropDown } from '@mui/icons-material';
 import { ClickAwayListener } from '@mui/material';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
@@ -16,35 +15,36 @@ import { MenuItem, MenuList } from '@mui/material';
 // import MenuItem from '@material-ui/core/MenuItem';
 // import MenuList from '@material-ui/core/MenuList';
 import React from 'react';
+import { useState } from 'react';
 
-import { UserContext } from '../Context/user';
+import { UserContext } from '../../Context/user';
 
-export default function MuteAudioButton({ publisher }) {
+export default function MuteVideoButton({ publisher }) {
   const { user } = React.useContext(UserContext);
-
+  //   const title = hasVideo ? 'Disable Camera' : 'Enable Camera';
   const { deviceInfo } = useDevices();
   const [devicesAvailable, setDevicesAvailable] = React.useState(null);
   const [options, setOptions] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const [audio, setHasAudio] = React.useState(user.defaultSettings.publishAudio);
-  const title = audio ? 'Disable Mic' : 'Enable Mic';
+  const [video, setHasVideo] = useState(user.defaultSettings.publishVideo);
 
-  const toggleAudio = () => {
+  const toggleVideo = () => {
+    console.log(publisher);
     if (!publisher) return;
-    publisher.publishAudio(!audio);
-    setHasAudio((prev) => !prev);
+    publisher.publishVideo(!video);
+    setHasVideo((prev) => !prev);
   };
 
-  const changeAudioSource = (deviceId) => {
-    publisher.setAudioSource(deviceId);
+  const changeVideoSource = (videoDeviceId) => {
+    publisher.setVideoSource(videoDeviceId);
   };
 
   React.useEffect(() => {
-    setDevicesAvailable(deviceInfo.audioInputDevices);
+    setDevicesAvailable(deviceInfo.videoInputDevices);
     if (publisher) {
-      const currentDeviceId = publisher.getAudioSource()?.deviceId;
+      const currentDeviceId = publisher.getVideoSource()?.deviceId;
 
       const IndexOfSelectedElement = devicesAvailable.indexOf(devicesAvailable.find((e) => e.deviceId === currentDeviceId));
       setSelectedIndex(IndexOfSelectedElement);
@@ -58,15 +58,14 @@ export default function MuteAudioButton({ publisher }) {
       });
       setOptions(videoDevicesAvailable);
     }
-    // if (user.videoEffects.backgroundBlur)
-    //   setOptions(['Not available with Background Blurring']);
+    if (user.defaultSettings.blur) setOptions(['Not available with Background Blurring']);
   }, [devicesAvailable]);
 
   const handleChangeVideoSource = (event, index) => {
     setSelectedIndex(index);
     setOpen(false);
-    const audioDeviceId = devicesAvailable.find((device) => device.label === event.target.textContent).deviceId;
-    changeAudioSource(audioDeviceId);
+    const videoDeviceId = devicesAvailable.find((device) => device.label === event.target.textContent).deviceId;
+    changeVideoSource(videoDeviceId);
   };
 
   const handleToggle = (e) => {
@@ -90,15 +89,16 @@ export default function MuteAudioButton({ publisher }) {
         ref={anchorRef}
         aria-label="split button"
       >
-        <Tooltip title={title} aria-label="add">
+        <Tooltip title={'video'} aria-label="add">
           <IconButton
-            onClick={toggleAudio}
+            onClick={toggleVideo}
             edge="start"
             aria-label="videoCamera"
             size="small"
             className={`h-[50px] m-[3px] w-[50px] background-white rounded-3xl color-white`}
           >
-            {audio ? <Mic className="bg-rose-50" /> : <MicOff />}
+            {!video ? <VideocamOff bg-rose-50 /> : <Videocam />}
+            {/* <Videocam /> */}
           </IconButton>
         </Tooltip>
         <IconButton

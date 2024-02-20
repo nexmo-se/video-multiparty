@@ -3,8 +3,8 @@ import ScreenShare from '@mui/icons-material/ScreenShare';
 
 import { IconButton } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import useDevices from '../hooks/useDevices';
-import LayoutManager from '../utils/layout-manager';
+import useDevices from '../../hooks/useDevices';
+import LayoutManager from '../../utils/layout-manager';
 
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { ArrowDropDown, MicOff } from '@mui/icons-material';
@@ -13,7 +13,7 @@ import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import { MenuItem, MenuList } from '@mui/material';
-import { SessionContext } from '../Context/session';
+import { SessionContext } from '../../Context/session';
 
 // import MenuItem from '@material-ui/core/MenuItem';
 // import MenuList from '@material-ui/core/MenuList';
