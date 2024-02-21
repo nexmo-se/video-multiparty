@@ -10,9 +10,7 @@ import CaptionsSettings from '../../components/CaptionsSettings';
 import { SessionContext } from '../../Context/session';
 import usePublisher from '../../hooks/publisher';
 import useSubscriber from '../../hooks/subscriber';
-import { CompressOutlined } from '@mui/icons-material';
-import MoreSettings from '../../components/MoreSettings';
-import MoreMenu from '../../components/MoreMenu';
+import { isMobile } from '../../util';
 import { UserContext } from '../../Context/user';
 import MuteVideoButton from '../../components/MuteVideoButton';
 import MuteAudioButton from '../../components/MuteAudioButton';
@@ -111,8 +109,12 @@ function Room() {
     return () => {
       clearTimeout(resizeTimerRef.current);
       resizeTimerRef.current = null;
+      if (mSession.session) {
+        mSession.session.disconnect();
+      }
+      // mSession.session.unpublish(mPublisher.publisher);
     };
-  }, []);
+  }, [mSession]);
 
   useEffect(() => {
     if (mSession.connected && !mPublisher.publisher) {
@@ -156,11 +158,11 @@ function Room() {
         <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
         <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
         <NoiseButton handleNoiseChange={handleNoiseChange} isNoiseSuppressionEnabled={isNoiseSuppressionEnabled}></NoiseButton>
-        <ScreenSharingButton layout={mPublisher.callLayout}></ScreenSharingButton>
+        {!isMobile() && <ScreenSharingButton layout={mPublisher.callLayout}></ScreenSharingButton>}
         {OT.hasMediaProcessorSupport() && <BlurButton publisher={mPublisher.publisher}></BlurButton>}
-        <MoreButton subStats={mSubscriber.aggregateStats} stats={mPublisher.getStats} />
+        {!isMobile() && <MoreButton subStats={mSubscriber.aggregateStats} stats={mPublisher.getStats} />}
         {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}
-        <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />
+        {!isMobile() && <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />}
         <ExitButton></ExitButton>
       </div>
       {mSession.reconnecting && <ConnectionAlert message1={'Lost connection'} message2={'Please verify your network connection'} />}

@@ -6,8 +6,13 @@ import { UserContext } from '../../Context/user';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
 function index() {
   const { user } = React.useContext(UserContext);
+  const navigate = useNavigate();
+  const handleExit = () => {
+    navigate('/thankyou');
+  };
 
   return (
     <ButtonGroup
@@ -19,6 +24,7 @@ function index() {
     >
       <Tooltip title="Exit meeting" aria-label="add">
         <IconButton
+          onClick={handleExit}
           edge="start"
           aria-label="videoCamera"
           size="small"

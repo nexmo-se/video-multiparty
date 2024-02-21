@@ -1,5 +1,6 @@
 // @flow
 import LM from 'opentok-layout-js';
+import { isMobile } from '../util';
 
 class LayoutManager {
   constructor(container, manager) {
@@ -17,6 +18,8 @@ class LayoutManager {
         bigFixedRatio: false,
         bigAlignItems: 'center',
         smallAlignItems: 'center',
+        maxRatio: isMobile() ? 16 / 9 : 14 / 16,
+        minRatio: isMobile() ? 3 / 2 : 9 / 16,
         maxWidth: Infinity,
         maxHeight: Infinity,
         smallMaxWidth: Infinity,
