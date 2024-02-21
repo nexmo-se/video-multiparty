@@ -109,9 +109,9 @@ function Room() {
     return () => {
       clearTimeout(resizeTimerRef.current);
       resizeTimerRef.current = null;
-      if (mSession.session) {
-        mSession.session.disconnect();
-      }
+      // if (mSession.session) {
+      //   mSession.session.disconnect();
+      // }
       // mSession.session.unpublish(mPublisher.publisher);
     };
   }, [mSession]);
