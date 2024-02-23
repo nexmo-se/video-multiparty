@@ -194,6 +194,7 @@ function usePublisher(containerId, displayName = false) {
       const options = {
         insertMode: 'append',
         name: name,
+        resolution: '1280x720',
         publishAudio: user.defaultSettings.publishAudio,
         publishVideo: user.defaultSettings.publishVideo,
         initials: getInitials(name),

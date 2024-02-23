@@ -3,6 +3,7 @@ import { useState, createContext, useRef, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import OT from '@opentok/client';
+import { getCredentials } from '../api/fetchCredentials';
 // import RoomAPI from 'api/room';
 // import CredentialAPI from 'api/credential';
 // import User from 'entities/user';
@@ -18,6 +19,7 @@ function SessionProvider({ children }) {
   // const [callLayout, setCalLayout] = useState(useLayoutManager());
   const [subscribers, setSubscribers] = useState([]);
   const [reconnecting, setReconnecting] = useState(false);
+  const [videoSources, setVideoSources] = useState([]);
 
   const session = useRef(null);
   //   const navigate = useNavigate();
@@ -28,12 +30,23 @@ function SessionProvider({ children }) {
   const [changedStream, setChangedStream] = useState();
   const [connections, setConnections] = useState([]);
   const [connected, setConnected] = useState(false);
+  const [creds, setCreds] = useState({});
+
   const credential = {
     apiKey: '46469012',
     token:
       'T1==cGFydG5lcl9pZD00NjQ2OTAxMiZzaWc9MjYwNTk0NWE2NGVmNzdhZjE3MzQ5YmQ5MmI0ZmYzNmQ1MWNmZjJlNjpzZXNzaW9uX2lkPTJfTVg0ME5qUTJPVEF4TW41LU1UY3dOalV6TkRNMk9URXhOMzV1UzBGcFoyeFFOMk5UUWpSU1MyeHFhbFV4Wm5odFVrMS1mbjQmY3JlYXRlX3RpbWU9MTcwNjUzNDM3OCZub25jZT0wLjczMTg2MTUyNTQ3NjM2Mjcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTcwOTEyNjM3NyZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==',
     sessionId: '2_MX40NjQ2OTAxMn5-MTcwNjUzNDM2OTExN35uS0FpZ2xQN2NTQjRSS2xqalUxZnhtUk1-fn4',
   };
+
+  // useEffect(() => {
+  //   getCredentials('room')
+  //     .then((creds) => {
+  //       console.log(creds);
+  //       setCreds(creds.data);
+  //     })
+  //     .catch((e) => console.log(e));
+  // }, []);
 
   useEffect(() => {
     try {
@@ -157,6 +170,7 @@ function SessionProvider({ children }) {
         insertMode: 'append',
         width: '100%',
         height: '100%',
+        // insertDefaultUI: false,
         style: {
           buttonDisplayMode: 'off',
           nameDisplayMode: 'on',
@@ -164,6 +178,11 @@ function SessionProvider({ children }) {
         showControls: false,
       });
       const subscriber = session.current.subscribe(stream, 'video-container', finalOptions);
+      // subscriber.on('videoElementCreated', function (event) {
+      //   const videoSource = event.element;
+      //   setVideoSources((prevVideoSources) => [...prevVideoSources, videoSource]);
+      // });
+
       const element = subscriber.element;
       if (stream.videoType === 'screen') {
         element.classList.add('OT_big');
@@ -220,10 +239,16 @@ function SessionProvider({ children }) {
   }
 
   async function joinRoom(roomName, user) {
+    getCredentials(roomName)
+      .then((creds) => {
+        console.log(creds.data);
+        connect(creds.data);
+      })
+      .catch((e) => console.log(e));
     // setUser(user);
     // const newRoom = await RoomAPI.createSession(roomName);
     // const credential = await CredentialAPI.generateCredential({ sessionId: newRoom.sessionId, role: 'publisher', data: user });
-    connect(credential);
+    // connect(credential);
   }
 
   async function disconnect() {
@@ -251,6 +276,7 @@ function SessionProvider({ children }) {
         subscribers,
         reconnecting,
         messages,
+        videoSources,
       }}
     >
       {children}

@@ -13,6 +13,8 @@ function UserProvider({ children }) {
       publishVideo: localStorage.getItem('localVideo') === 'true',
       name: username,
       blur: false,
+      // audioSource: 'default',
+      // videoSource: 'default',
     },
     issues: {
       reconnections: 0,

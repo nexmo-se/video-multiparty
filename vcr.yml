@@ -9,7 +9,7 @@ instance:
   capabilities:
     - video
   environment:
-    - name: VONAGE_NUMBER
+    - name: apikey
       value: '44700000000'
 entrypoint: [npm, start]
 debug:

@@ -21,7 +21,10 @@ import Chat from '../../components/Chat';
 import BlurButton from '../../components/BlurButton';
 import NoiseButton from '../../components/NoiseButton';
 import ExitButton from '../../components/ExitButton';
+import RemoteSubscriber from '../../components/RemoteSubscriber';
+import CustomSubscriber from '../../components/CustomSubscriber';
 import { useMediaProcessor } from '../../hooks/mediaProcessor';
+import { useParams } from 'react-router-dom';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -32,6 +35,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Room() {
+  const { roomName } = useParams();
   const { processor, connector } = useMediaProcessor();
   // const [layoutManager, setLayoutManager] = useState(useLayoutManager());
   const { user } = useContext(UserContext);
@@ -45,12 +49,17 @@ function Room() {
   const [captionsEnabled, setCaptionsEnabled] = useState(false);
 
   useEffect(() => {
-    mSession.joinRoom('perro', 'jose');
+    mSession.joinRoom(roomName, 'jose');
   }, []);
 
   const handleNoiseChange = () => {
     console.log('toggling noise');
     setNoiseSuppression((prev) => !prev);
+  };
+
+  const handleLeave = () => {
+    if (!mSession) return;
+    mSession.session.disconnect();
   };
 
   useEffect(() => {
@@ -138,6 +147,12 @@ function Room() {
     <Grid className="w-screen" container spacing={1}>
       <Grid ref={wrapRef} id="wrapper" height={captionsEnabled ? '80vh' : '90vh'} item xs={chatOpen ? 9 : 12}>
         <div id="video-container" className="flex column w-full h-full">
+          {/* {mSession.videoSources.length > 0 && mSession.videoSources.map((vid) => <CustomSubscriber elem={vid}></CustomSubscriber>)} */}
+          {/* {mSession.session &&
+            mSession.streams.length > 0 &&
+            mSession.streams.map((stream) => (
+              <RemoteSubscriber key={stream.streamId} stream={stream} session={mSession.session}></RemoteSubscriber>
+            ))} */}
           {/* <img
             className="w-1/2"
             src="https://www.airswift.com/hubfs/Imported_Blog_Media/woman-using-video-call-etiquette-1.jpg#keepProtocol"
@@ -159,11 +174,11 @@ function Room() {
         <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
         <NoiseButton handleNoiseChange={handleNoiseChange} isNoiseSuppressionEnabled={isNoiseSuppressionEnabled}></NoiseButton>
         {!isMobile() && <ScreenSharingButton layout={mPublisher.callLayout}></ScreenSharingButton>}
-        {OT.hasMediaProcessorSupport() && <BlurButton publisher={mPublisher.publisher}></BlurButton>}
+        {OT.hasMediaProcessorSupport() && !isMobile() && <BlurButton publisher={mPublisher.publisher}></BlurButton>}
         {!isMobile() && <MoreButton subStats={mSubscriber.aggregateStats} stats={mPublisher.getStats} />}
         {/* <CaptionsSettings handleClick={() => setCaptionsEnabled((prev) => !prev)} /> */}
         {!isMobile() && <ChatSettings handleClick={() => setChatOpen((prev) => !prev)} />}
-        <ExitButton></ExitButton>
+        <ExitButton handleLeave={handleLeave}></ExitButton>
       </div>
       {mSession.reconnecting && <ConnectionAlert message1={'Lost connection'} message2={'Please verify your network connection'} />}
       {mPublisher.quality !== 'good' && (

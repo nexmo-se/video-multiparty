@@ -8,7 +8,7 @@ function useSound() {
 
   useEffect(() => {
     sound.current = new Howl({
-      src: ['sound.mp3'],
+      src: [`${window.location.origin}/sound.mp3`],
       //   autoplay: true,
       loop: true,
       volume: 0.5,

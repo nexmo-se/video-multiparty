@@ -1,7 +1,8 @@
 import React from 'react';
 import { useRef, useState, useCallback, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import OT from '@opentok/client';
+import { isMobile } from '../../util';
 const DFT_PUBLISHER_OPTIONS = {
   insertMode: 'append',
   width: '100%',
@@ -45,6 +46,7 @@ import { UserContext } from '../../Context/user';
 import BlurSettings from '../../components/BlurSettings';
 
 function WaitingRoom() {
+  const { roomName } = useParams();
   const navigate = useNavigate();
   const { play, playing } = useSound();
   const [logLevel, setLogLevel] = useState(0);
@@ -66,7 +68,6 @@ function WaitingRoom() {
   const containerRef = useRef(null);
   const { initPublisher, destroyPublisher, publisher } = usePublisher();
   const [devices, setDevices] = useState(null);
-  const [roomName, setRoomName] = useState('');
   const [accessAllowed, setAccessAllowed] = useState(DEVICE_ACCESS_STATUS.PENDING);
 
   const handleClick = () => {
@@ -91,7 +92,7 @@ function WaitingRoom() {
     localStorage.setItem('localVideo', localVideo);
 
     navigate({
-      pathname: `/room`,
+      pathname: `/room/${roomName}`,
     });
   };
 
@@ -365,7 +366,9 @@ function WaitingRoom() {
         {/* </Box> */}
         {/* </Container> */}
       </div>
-      {accessAllowed !== DEVICE_ACCESS_STATUS.ACCEPTED && <DeviceAccessAlert accessStatus={accessAllowed}></DeviceAccessAlert>}
+      {!isMobile() && accessAllowed !== DEVICE_ACCESS_STATUS.ACCEPTED && (
+        <DeviceAccessAlert accessStatus={accessAllowed}></DeviceAccessAlert>
+      )}
     </React.Fragment>
   );
 }

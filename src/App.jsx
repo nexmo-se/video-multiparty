@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg';
 import './App.css';
 import Room from './pages/Room/index';
 import GoodBye from './pages/GoodBye/index';
+import RoomCreation from './pages/RoomCreation';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -22,17 +23,19 @@ function App() {
         <SessionProvider>
           <StatsProvider>
             <Routes>
-              <Route path="/waiting-room" element={<WaitingRoom />} />
-              <Route path="*" element={<WaitingRoom />} />
+              <Route path="/create-room" element={<RoomCreation />} />
+              <Route path="/waiting-room/:roomName" element={<WaitingRoom />} />
+
               <Route
-                path="/room"
+                path="/room/:roomName"
                 element={
-                  <div className="">
-                    <Room></Room>
-                  </div>
+                  // <div className="">
+                  <Room></Room>
+                  // </div>
                 }
               />
               <Route path="/thankyou" element={<GoodBye />} />
+              <Route path="*" element={<RoomCreation />} />
             </Routes>
           </StatsProvider>
         </SessionProvider>
