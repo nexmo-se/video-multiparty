@@ -19,7 +19,7 @@ import React from 'react';
 
 import { UserContext } from '../../Context/user';
 
-export default function MuteAudioButton({ publisher }) {
+export default function MuteAudioButton({ publisher, publishing }) {
   const { user } = React.useContext(UserContext);
 
   const { deviceInfo } = useDevices();
@@ -43,19 +43,24 @@ export default function MuteAudioButton({ publisher }) {
 
   React.useEffect(() => {
     setDevicesAvailable(deviceInfo.audioInputDevices);
-    if (publisher) {
+    console.log('use effect running in the mute audio button');
+    console.log(publishing);
+    if (publisher && publishing) {
+      console.log('run inside publishing muteaudio');
       const currentDeviceId = publisher.getAudioSource()?.deviceId;
-
+      console.log('device id');
+      console.log(currentDeviceId);
       const IndexOfSelectedElement = devicesAvailable.indexOf(devicesAvailable.find((e) => e.deviceId === currentDeviceId));
       setSelectedIndex(IndexOfSelectedElement);
     }
-  }, [publisher, deviceInfo, devicesAvailable]);
+  }, [publisher, deviceInfo, devicesAvailable, publishing]);
 
   React.useEffect(() => {
     if (devicesAvailable) {
       const videoDevicesAvailable = devicesAvailable.map((e) => {
         return e.label;
       });
+      console.log(videoDevicesAvailable);
       setOptions(videoDevicesAvailable);
     }
     // if (user.videoEffects.backgroundBlur)
@@ -135,10 +140,8 @@ export default function MuteAudioButton({ publisher }) {
                   {options.map((option, index) => (
                     <MenuItem
                       key={option}
-                      selected={index === selectedIndex}
+                      selected={option === publisher.getAudioSource().label}
                       onClick={(event) => handleChangeVideoSource(event, index)}
-                      className="background-black"
-                      // disabled={user.videoEffects.backgroundBlur}
                     >
                       {option}
                     </MenuItem>

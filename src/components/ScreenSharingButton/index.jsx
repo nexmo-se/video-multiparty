@@ -43,8 +43,13 @@ export default function ScreenSharingButton({ layout }) {
         }
       );
       screnSharingPub.current.element.classList.add('OT_big');
+      screnSharingPub.current.on('streamCreated', (e) => {
+        setSharing(true);
+      });
+      screnSharingPub.current.on('mediaStopped', (e) => {
+        setSharing(false);
+      });
       session.publish(screnSharingPub.current);
-      setSharing(true);
     } else if (session && sharing) {
       session.unpublish(screnSharingPub.current);
       // mSession.unpublish({ session: session.current });

@@ -17,7 +17,7 @@ function index({ handleLeave }) {
 
   return (
     <ButtonGroup
-      className="m-2 bg-rose-50 absolute right-[10px]"
+      className="m-2 bg-red-300 absolute left-[10px]"
       disableElevation
       sx={{ borderRadius: '30px' }}
       variant="contained"

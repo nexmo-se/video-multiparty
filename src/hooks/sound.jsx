@@ -23,7 +23,7 @@ function useSound() {
     });
   }, []);
 
-  const play = () => {
+  const togglePlay = () => {
     if (!sound.current) return;
     if (playing) {
       sound.current.stop();
@@ -35,7 +35,7 @@ function useSound() {
 
   return {
     playing,
-    play,
+    togglePlay,
   };
 }
 export default useSound;

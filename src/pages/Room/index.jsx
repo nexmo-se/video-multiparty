@@ -170,9 +170,12 @@ function Room() {
         </Grid>
       )}
       <div className="flex justify-center flex-end items-center absolute h-[90px] radius-[25px] w-full bottom-[0px] left-[0px] bg-black rounded-t-3xl">
-        <MuteVideoButton publisher={mPublisher.publisher}></MuteVideoButton>
-        <MuteAudioButton publisher={mPublisher.publisher}></MuteAudioButton>
-        <NoiseButton handleNoiseChange={handleNoiseChange} isNoiseSuppressionEnabled={isNoiseSuppressionEnabled}></NoiseButton>
+        <MuteAudioButton publisher={mPublisher.publisher} publishing={mPublisher.isPublishing}></MuteAudioButton>
+        <MuteVideoButton publisher={mPublisher.publisher} publishing={mPublisher.isPublishing}></MuteVideoButton>
+
+        {OT.hasMediaProcessorSupport() && (
+          <NoiseButton handleNoiseChange={handleNoiseChange} isNoiseSuppressionEnabled={isNoiseSuppressionEnabled}></NoiseButton>
+        )}
         {!isMobile() && <ScreenSharingButton layout={mPublisher.callLayout}></ScreenSharingButton>}
         {OT.hasMediaProcessorSupport() && !isMobile() && <BlurButton publisher={mPublisher.publisher}></BlurButton>}
         {!isMobile() && <MoreButton subStats={mSubscriber.aggregateStats} stats={mPublisher.getStats} />}

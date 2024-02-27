@@ -19,7 +19,7 @@ import { useState } from 'react';
 
 import { UserContext } from '../../Context/user';
 
-export default function MuteVideoButton({ publisher }) {
+export default function MuteVideoButton({ publisher, isPublishing }) {
   const { user } = React.useContext(UserContext);
   //   const title = hasVideo ? 'Disable Camera' : 'Enable Camera';
   const { deviceInfo } = useDevices();
@@ -43,13 +43,15 @@ export default function MuteVideoButton({ publisher }) {
 
   React.useEffect(() => {
     setDevicesAvailable(deviceInfo.videoInputDevices);
-    if (publisher) {
+    if (publisher && isPublishing) {
+      console.log(publisher);
       const currentDeviceId = publisher.getVideoSource()?.deviceId;
+      console.log('video device' + currentDeviceId);
 
       const IndexOfSelectedElement = devicesAvailable.indexOf(devicesAvailable.find((e) => e.deviceId === currentDeviceId));
       setSelectedIndex(IndexOfSelectedElement);
     }
-  }, [publisher, deviceInfo, devicesAvailable]);
+  }, [publisher, deviceInfo, devicesAvailable, isPublishing]);
 
   React.useEffect(() => {
     if (devicesAvailable) {
@@ -58,7 +60,7 @@ export default function MuteVideoButton({ publisher }) {
       });
       setOptions(videoDevicesAvailable);
     }
-    if (user.defaultSettings.blur) setOptions(['Not available with Background Blurring']);
+    if (user.defaultSettings.blur) setOptions(['To change devices disable Background Blurring']);
   }, [devicesAvailable]);
 
   const handleChangeVideoSource = (event, index) => {
@@ -135,7 +137,7 @@ export default function MuteVideoButton({ publisher }) {
                   {options.map((option, index) => (
                     <MenuItem
                       key={option}
-                      selected={index === selectedIndex}
+                      selected={option === publisher.getVideoSource().label}
                       onClick={(event) => handleChangeVideoSource(event, index)}
                       className="background-black"
                       // disabled={user.videoEffects.backgroundBlur}

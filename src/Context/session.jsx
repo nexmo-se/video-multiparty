@@ -239,16 +239,16 @@ function SessionProvider({ children }) {
   }
 
   async function joinRoom(roomName, user) {
-    getCredentials(roomName)
-      .then((creds) => {
-        console.log(creds.data);
-        connect(creds.data);
-      })
-      .catch((e) => console.log(e));
+    // getCredentials(roomName)
+    //   .then((creds) => {
+    //     console.log(creds.data);
+    //     connect(creds.data);
+    //   })
+    //   .catch((e) => console.log(e));
     // setUser(user);
     // const newRoom = await RoomAPI.createSession(roomName);
     // const credential = await CredentialAPI.generateCredential({ sessionId: newRoom.sessionId, role: 'publisher', data: user });
-    // connect(credential);
+    connect(credential);
   }
 
   async function disconnect() {

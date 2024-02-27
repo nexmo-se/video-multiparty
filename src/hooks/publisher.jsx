@@ -43,6 +43,7 @@ function usePublisher(containerId, displayName = false) {
 
   function handleStreamCreated(e) {
     console.log(e.target.id);
+    console.log('started publishing');
     setIsPublishing(true);
     // insertWifiIcon(e.target.id, e.target.element);
     setStream(e.stream);
@@ -50,6 +51,7 @@ function usePublisher(containerId, displayName = false) {
 
   function handleStreamDestroyed(e) {
     setStream(null);
+    setIsPublishing(false);
     if (publisher) publisher.current.destroy();
     publisher.current = null;
   }
@@ -159,7 +161,7 @@ function usePublisher(containerId, displayName = false) {
         if (err && attempt >= 3) {
           resolve({ retry: false, error: err });
         } else {
-          setIsPublishing(true);
+          // setIsPublishing(true);
           resolve({ retry: false, error: undefined });
         }
       });
@@ -197,6 +199,8 @@ function usePublisher(containerId, displayName = false) {
         resolution: '1280x720',
         publishAudio: user.defaultSettings.publishAudio,
         publishVideo: user.defaultSettings.publishVideo,
+        audioSource: user.defaultSettings.audioSource,
+        videoSource: user.defaultSettings.videoSource,
         initials: getInitials(name),
         audioFallback: {
           publisher: true,
@@ -208,6 +212,7 @@ function usePublisher(containerId, displayName = false) {
       };
       const finalOptions = Object.assign({}, options, extraData);
       setPublisherOptions(finalOptions);
+      console.log(finalOptions);
       const newPublisher = OT.initPublisher(containerId, finalOptions);
 
       stats.addPublisher(newPublisher);

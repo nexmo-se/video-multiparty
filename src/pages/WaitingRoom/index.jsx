@@ -11,7 +11,8 @@ const DFT_PUBLISHER_OPTIONS = {
   publishVideo: true,
   // fitMode: 'contain',
 };
-import { getInitials } from '../../util';
+
+import { getInitials, getAudioSourceDeviceId } from '../../util';
 import Grid from '@mui/material/Grid';
 import { DEVICE_ACCESS_STATUS } from '../../constants';
 import DeviceAccessAlert from '../../components/DeviceAccessAlert';
@@ -48,7 +49,7 @@ import BlurSettings from '../../components/BlurSettings';
 function WaitingRoom() {
   const { roomName } = useParams();
   const navigate = useNavigate();
-  const { play, playing } = useSound();
+  const { togglePlay, playing } = useSound();
   const [logLevel, setLogLevel] = useState(0);
   const { user, setUser } = useContext(UserContext);
   let [audioDevice, setAudioDevice] = useState('');
@@ -90,29 +91,43 @@ function WaitingRoom() {
     localStorage.setItem('username', user.username);
     localStorage.setItem('localAudio', localAudio);
     localStorage.setItem('localVideo', localVideo);
-
+    localStorage.setItem('localAudioSource', localAudioSource);
+    localStorage.setItem('localVideoSource', localVideoSource);
+    localStorage.setItem('localAudioOutput', localAudioOutput);
+    if (playing) togglePlay();
     navigate({
       pathname: `/room/${roomName}`,
     });
   };
 
   useEffect(() => {
-    setUser({
-      ...user,
-      defaultSettings: {
-        publishAudio: localAudio,
-        publishVideo: localVideo,
-        name: userName,
-        blur: blur,
-      },
-    });
-  }, [localVideo, localAudio, userName, blur]);
+    if (
+      localAudio !== user.defaultSettings.publishAudio ||
+      localVideo !== user.defaultSettings.publishVideo ||
+      localAudioSource !== user.defaultSettings.audioSource ||
+      localVideoSource !== user.defaultSettings.videoSource
+    ) {
+      console.log('audio source' + localAudioSource);
+      console.log('video source' + localVideoSource);
+
+      setUser({
+        ...user,
+        defaultSettings: {
+          publishAudio: localAudio,
+          publishVideo: localVideo,
+          audioSource: localAudioSource,
+          videoSource: localVideoSource,
+          name: userName,
+          blur: blur,
+        },
+      });
+    }
+  }, [localVideo, localAudio, userName, blur, localAudioSource, localVideoSource]);
 
   const handleChangeOutput = useCallback(
     (e) => {
       const audioOutputId = e.target.getAttribute('value');
       setAudioOutputDevice(audioOutputId);
-      // await VideoExpress.setAudioOutputDevice(audioOutputId);
       OT.setAudioOutputDevice(audioOutputId);
       setLocalAudioOutput(audioOutputId);
     },
@@ -180,16 +195,18 @@ function WaitingRoom() {
 
   React.useEffect(() => {
     if (publisher && deviceInfo) {
-      // publisher.getAudioSource().then((e) => {
-      //   console.log(e);
-      //   setAudioDevice(e.deviceId);
-      // });
-
       const currentVideoDevice = publisher.getVideoSource();
+      const currentAudioDevice = publisher.getAudioSource();
+      setAudioDevice(deviceInfo.audioInputDevices, currentAudioDevice);
+      setLocalAudioSource(getAudioSourceDeviceId(deviceInfo.audioInputDevices, currentAudioDevice));
+      console.log(currentAudioDevice);
+      console.log(currentVideoDevice);
       setVideoDevice(currentVideoDevice.deviceId);
-
+      // setLocalAudioSource(currentAudioDevice);
+      setLocalVideoSource(currentVideoDevice.deviceId);
       OT.getActiveAudioOutputDevice().then((currentAudioOutputDevice) => {
         setAudioOutputDevice(currentAudioOutputDevice.deviceId);
+        setLocalAudioOutput(currentAudioOutputDevice.deviceId);
       });
     }
   }, [deviceInfo, publisher, setAudioDevice, setVideoDevice, setAudioOutputDevice]);
@@ -287,9 +304,18 @@ function WaitingRoom() {
             <Collapse in={openAudioInput} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 {deviceInfo.audioInputDevices.map((device) => (
-                  <ListItemButton value={device.deviceId} key={device.deviceId} sx={{ pl: 4 }}>
+                  // const deviceId = device.deviceId
+                  <ListItemButton
+                    value={device.deviceId}
+                    key={device.deviceId}
+                    sx={{ pl: 4, backgroundColor: device.deviceId === localAudioSource ? 'rgb(156,39,176)' : '' }}
+                  >
                     {/* <ListItemText onClick={handleAudioSource} primary={device.label} value={device.deviceId}></ListItemText> */}
-                    <span value={device.deviceId} onClick={handleAudioSource}>
+                    <span
+                      // className={device.deviceId === localAudioSource ? 'background-black' : ''}
+                      value={device.deviceId}
+                      onClick={handleAudioSource}
+                    >
                       {device.label}
                     </span>
                   </ListItemButton>
@@ -306,7 +332,10 @@ function WaitingRoom() {
             <Collapse in={openVideoInput} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 {deviceInfo.videoInputDevices.map((device) => (
-                  <ListItemButton key={device.deviceId} sx={{ pl: 4 }}>
+                  <ListItemButton
+                    key={device.deviceId}
+                    sx={{ pl: 4, backgroundColor: device.deviceId === localVideoSource ? 'rgb(156,39,176)' : '' }}
+                  >
                     <span value={device.deviceId} onClick={handleVideoSource}>
                       {device.label}
                     </span>
@@ -325,7 +354,10 @@ function WaitingRoom() {
             <Collapse in={openAudioOutput} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 {deviceInfo.audioOutputDevices.map((device) => (
-                  <ListItemButton key={device.deviceId} sx={{ pl: 4 }}>
+                  <ListItemButton
+                    key={device.deviceId}
+                    sx={{ pl: 4, backgroundColor: device.deviceId === localAudioOutput ? 'rgb(156,39,176)' : '' }}
+                  >
                     <span value={device.deviceId} onClick={handleChangeOutput}>
                       {device.label}
                     </span>
@@ -333,7 +365,7 @@ function WaitingRoom() {
                 ))}
               </List>
             </Collapse>
-            <Button variant="outlined" onClick={play} startIcon={<Speaker />}>
+            <Button variant="outlined" onClick={togglePlay} startIcon={<Speaker />}>
               {!playing ? 'Test speaker' : 'Stop sound'}
             </Button>
 

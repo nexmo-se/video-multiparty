@@ -7,7 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 function index({ handleClick }) {
   return (
     <ButtonGroup
-      className="m-2 bg-rose-50 absolute left-[50px]"
+      className="m-2 bg-rose-50 absolute right-[50px]"
       disableElevation
       sx={{ borderRadius: '30px' }}
       variant="contained"
