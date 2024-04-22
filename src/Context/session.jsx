@@ -33,11 +33,16 @@ function SessionProvider({ children }) {
   const [creds, setCreds] = useState({});
 
   const credential = {
-    apiKey: '46469012',
+    apiKey: '46264952',
     token:
-      'T1==cGFydG5lcl9pZD00NjQ2OTAxMiZzaWc9MjYwNTk0NWE2NGVmNzdhZjE3MzQ5YmQ5MmI0ZmYzNmQ1MWNmZjJlNjpzZXNzaW9uX2lkPTJfTVg0ME5qUTJPVEF4TW41LU1UY3dOalV6TkRNMk9URXhOMzV1UzBGcFoyeFFOMk5UUWpSU1MyeHFhbFV4Wm5odFVrMS1mbjQmY3JlYXRlX3RpbWU9MTcwNjUzNDM3OCZub25jZT0wLjczMTg2MTUyNTQ3NjM2Mjcmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTcwOTEyNjM3NyZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==',
-    sessionId: '2_MX40NjQ2OTAxMn5-MTcwNjUzNDM2OTExN35uS0FpZ2xQN2NTQjRSS2xqalUxZnhtUk1-fn4',
+      'T1==cGFydG5lcl9pZD00NjI2NDk1MiZzaWc9ZTRmM2FlOTYyMzY1YmIwOTBmNGE1ZmUwN2NjZDJjODVhOTRkOTYyNTpzZXNzaW9uX2lkPTJfTVg0ME5qSTJORGsxTW41LU1UY3hNamt4T0Rrd056SXpNWDV5T1dSTFdsWTRXVkpyYUVsQk5pOVdXWGhDZWxWU1RHeC1mbjQmY3JlYXRlX3RpbWU9MTcxMzUyNDEzMiZub25jZT0wLjE0MzYxODczNDEwOTQxNTA2JnJvbGU9cHVibGlzaGVyJmV4cGlyZV90aW1lPTE3MTQxMjg5MzEmaW5pdGlhbF9sYXlvdXRfY2xhc3NfbGlzdD0=',
+    sessionId: '2_MX40NjI2NDk1Mn5-MTcxMjkxODkwNzIzMX5yOWRLWlY4WVJraElBNi9WWXhCelVSTGx-fn4',
   };
+
+  // const apiKey = '46264952';
+  // const sessionId = '2_MX40NjI2NDk1Mn5-MTcxMjkxODkwNzIzMX5yOWRLWlY4WVJraElBNi9WWXhCelVSTGx-fn4';
+  // const token =
+  //   'T1==cGFydG5lcl9pZD00NjI2NDk1MiZzaWc9M2IwZWIzNDJhMTdlZmY3MTg1MDAxODE4NGJhZGRjMTY4NmRiMzFkNTpzZXNzaW9uX2lkPTJfTVg0ME5qSTJORGsxTW41LU1UY3hNamt4T0Rrd056SXpNWDV5T1dSTFdsWTRXVkpyYUVsQk5pOVdXWGhDZWxWU1RHeC1mbjQmY3JlYXRlX3RpbWU9MTcxMjkxODkxMiZub25jZT0wLjQ4MTgxMDYzNDg4OTMxODMmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTcxMzUyMzcxMiZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==';
 
   // useEffect(() => {
   //   getCredentials('room')
@@ -118,8 +123,8 @@ function SessionProvider({ children }) {
 
   const addSubscribers = ({ subscriber }) => {
     setSubscribers((prev) => [...prev, subscriber]);
-    const resize = createResizeObserver(subscriber);
-    resize.observe(document.getElementById(subscriber.id));
+    // const resize = createResizeObserver(subscriber);
+    // resize.observe(document.getElementById(subscriber.id));
   };
 
   const removeSubscribers = ({ subscriber }) => {
@@ -170,6 +175,7 @@ function SessionProvider({ children }) {
         insertMode: 'append',
         width: '100%',
         height: '100%',
+        preferredResolution: 'auto',
         // insertDefaultUI: false,
         style: {
           buttonDisplayMode: 'off',

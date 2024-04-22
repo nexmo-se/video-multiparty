@@ -6,7 +6,14 @@ import { generateToken, getCredentials } from './opentok/index.js';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 import { vcr } from '@vonage/vcr-sdk';
-import { env } from 'process';
+
+import childProcess from 'child_process';
+
+import fs from 'fs';
+
+// import { createTester, destroyTester, openTab, closeTab } from './tester';
+
+const sockets = {};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +32,7 @@ const state = vcr.getInstanceState();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.set('trust proxy', true);
 
 const sessions = {};
 
@@ -83,6 +91,24 @@ app.post('/issue', async (req, res) => {
   }
 });
 
+app.delete('/issues', async (req, res) => {
+  try {
+    console.log('deleting issue');
+    // console.log(req.body);
+    const state = vcr.getInstanceState();
+    const issue = req.body.issue;
+    const issueid = issue.issueId;
+    console.log(issueid);
+    const resp = await state.mapDelete('issues', [issueid]);
+    // const resp = await state.set(issueid, issue);
+    console.log(resp);
+    res.send(resp);
+  } catch (e) {
+    console.log(e.data);
+    res.sendStatus(200);
+  }
+});
+
 app.get('/issues', async (req, res) => {
   try {
     const state = vcr.getInstanceState();
@@ -102,7 +128,6 @@ app.get('/issues', async (req, res) => {
 // }
 
 app.get('/*', (req, res) => {
-  console.log('testing');
   // res.sendFile(frontendFiles + '/index.html');
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
   // res.sendFile('/Users/jmolinasanz/Desktop/projects/my-vveapp/dist/index.html');

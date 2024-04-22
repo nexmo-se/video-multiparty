@@ -5,6 +5,7 @@ import './App.css';
 import Room from './pages/Room/index';
 import GoodBye from './pages/GoodBye/index';
 import RoomCreation from './pages/RoomCreation';
+import ExperienceComposer from './pages/ExperienceComposer';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -25,6 +26,7 @@ function App() {
             <Routes>
               <Route path="/create-room" element={<RoomCreation />} />
               <Route path="/waiting-room/:roomName" element={<WaitingRoom />} />
+              <Route path="/ec-room/:roomName" element={<ExperienceComposer />} />
 
               <Route
                 path="/room/:roomName"

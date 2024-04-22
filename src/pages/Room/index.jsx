@@ -66,7 +66,7 @@ function Room() {
     console.log('use effect run -toggle noise suppresion');
     console.log(isNoiseSuppressionEnabled);
     // if (OT.hasMediaProcessorSupport()) {
-    if (mPublisher.publisher) {
+    if (mPublisher.publisher && OT.hasMediaProcessorSupport()) {
       if (isNoiseSuppressionEnabled) {
         console.log(mPublisher.publisher);
         mPublisher.publisher
