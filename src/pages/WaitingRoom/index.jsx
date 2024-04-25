@@ -106,8 +106,9 @@ function WaitingRoom() {
     Promise.all(queryPromises)
       .then((statuses) => {
         statuses.forEach((status) => {
-          if (status.state === 'denied') {
+          if (status.state === 'prompt') {
             // Handle denied state
+            setAccessAllowed(DEVICE_ACCESS_STATUS.PENDING);
           }
           console.log(`${status.name}: ${status.state}`);
         });
