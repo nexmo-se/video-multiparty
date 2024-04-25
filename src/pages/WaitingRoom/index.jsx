@@ -101,18 +101,20 @@ function WaitingRoom() {
   };
 
   useEffect(() => {
-    navigator.permissions.query({ name: 'camera', name: 'microphone' }).then(function (result) {
-      if (result.state === 'granted') {
-        setAccessAllowed(DEVICE_ACCESS_STATUS.ACCEPTED);
-        //permission has already been granted, no prompt is shown
-      } else if (result.state === 'prompt') {
-        setAccessAllowed(DEVICE_ACCESS_STATUS.PENDING);
-        //there's no peristent permission registered, will be showing the prompt
-      } else if (result.state === 'denied') {
-        //permission has been denied
-        setAccessAllowed(DEVICE_ACCESS_STATUS.REJECTED);
-      }
-    });
+    const queryPromises = ['microphone', 'camera'].map((name) => navigator.permissions.query({ name }));
+
+    Promise.all(queryPromises)
+      .then((statuses) => {
+        statuses.forEach((status) => {
+          if (status.state === 'denied') {
+            // Handle denied state
+          }
+          console.log(`${status.name}: ${status.state}`);
+        });
+      })
+      .catch((error) => {
+        console.error('Error querying permissions:', error);
+      });
   }, []);
 
   useEffect(() => {
