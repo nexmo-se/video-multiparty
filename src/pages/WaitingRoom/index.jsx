@@ -69,7 +69,7 @@ function WaitingRoom() {
   const containerRef = useRef(null);
   const { initPublisher, destroyPublisher, publisher } = usePublisher();
   const [devices, setDevices] = useState(null);
-  const [accessAllowed, setAccessAllowed] = useState(DEVICE_ACCESS_STATUS.PENDING);
+  const [accessAllowed, setAccessAllowed] = useState(null);
 
   const handleClick = () => {
     setOpenAudioInput(!openAudioInput);
@@ -99,6 +99,21 @@ function WaitingRoom() {
       pathname: `/room/${roomName}`,
     });
   };
+
+  useEffect(() => {
+    navigator.permissions.query({ name: 'camera', name: 'microphone' }).then(function (result) {
+      if (result.state === 'granted') {
+        setAccessAllowed(DEVICE_ACCESS_STATUS.ACCEPTED);
+        //permission has already been granted, no prompt is shown
+      } else if (result.state === 'prompt') {
+        setAccessAllowed(DEVICE_ACCESS_STATUS.PENDING);
+        //there's no peristent permission registered, will be showing the prompt
+      } else if (result.state === 'denied') {
+        //permission has been denied
+        setAccessAllowed(DEVICE_ACCESS_STATUS.REJECTED);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (
