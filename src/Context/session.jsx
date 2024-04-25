@@ -32,17 +32,12 @@ function SessionProvider({ children }) {
   const [connected, setConnected] = useState(false);
   const [creds, setCreds] = useState({});
 
-  const credential = {
-    apiKey: '46264952',
-    token:
-      'T1==cGFydG5lcl9pZD00NjI2NDk1MiZzaWc9ZTRmM2FlOTYyMzY1YmIwOTBmNGE1ZmUwN2NjZDJjODVhOTRkOTYyNTpzZXNzaW9uX2lkPTJfTVg0ME5qSTJORGsxTW41LU1UY3hNamt4T0Rrd056SXpNWDV5T1dSTFdsWTRXVkpyYUVsQk5pOVdXWGhDZWxWU1RHeC1mbjQmY3JlYXRlX3RpbWU9MTcxMzUyNDEzMiZub25jZT0wLjE0MzYxODczNDEwOTQxNTA2JnJvbGU9cHVibGlzaGVyJmV4cGlyZV90aW1lPTE3MTQxMjg5MzEmaW5pdGlhbF9sYXlvdXRfY2xhc3NfbGlzdD0=',
-    sessionId: '2_MX40NjI2NDk1Mn5-MTcxMjkxODkwNzIzMX5yOWRLWlY4WVJraElBNi9WWXhCelVSTGx-fn4',
-  };
-
-  // const apiKey = '46264952';
-  // const sessionId = '2_MX40NjI2NDk1Mn5-MTcxMjkxODkwNzIzMX5yOWRLWlY4WVJraElBNi9WWXhCelVSTGx-fn4';
-  // const token =
-  //   'T1==cGFydG5lcl9pZD00NjI2NDk1MiZzaWc9M2IwZWIzNDJhMTdlZmY3MTg1MDAxODE4NGJhZGRjMTY4NmRiMzFkNTpzZXNzaW9uX2lkPTJfTVg0ME5qSTJORGsxTW41LU1UY3hNamt4T0Rrd056SXpNWDV5T1dSTFdsWTRXVkpyYUVsQk5pOVdXWGhDZWxWU1RHeC1mbjQmY3JlYXRlX3RpbWU9MTcxMjkxODkxMiZub25jZT0wLjQ4MTgxMDYzNDg4OTMxODMmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTcxMzUyMzcxMiZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==';
+  // const credential = {
+  //   apiKey: '46264952',
+  //   token:
+  //     'T1==cGFydG5lcl9pZD00NjI2NDk1MiZzaWc9ZTRmM2FlOTYyMzY1YmIwOTBmNGE1ZmUwN2NjZDJjODVhOTRkOTYyNTpzZXNzaW9uX2lkPTJfTVg0ME5qSTJORGsxTW41LU1UY3hNamt4T0Rrd056SXpNWDV5T1dSTFdsWTRXVkpyYUVsQk5pOVdXWGhDZWxWU1RHeC1mbjQmY3JlYXRlX3RpbWU9MTcxMzUyNDEzMiZub25jZT0wLjE0MzYxODczNDEwOTQxNTA2JnJvbGU9cHVibGlzaGVyJmV4cGlyZV90aW1lPTE3MTQxMjg5MzEmaW5pdGlhbF9sYXlvdXRfY2xhc3NfbGlzdD0=',
+  //   sessionId: '2_MX40NjI2NDk1Mn5-MTcxMjkxODkwNzIzMX5yOWRLWlY4WVJraElBNi9WWXhCelVSTGx-fn4',
+  // };
 
   // useEffect(() => {
   //   getCredentials('room')
@@ -245,12 +240,12 @@ function SessionProvider({ children }) {
   }
 
   async function joinRoom(roomName, user) {
-    // getCredentials(roomName)
-    //   .then((creds) => {
-    //     console.log(creds.data);
-    //     connect(creds.data);
-    //   })
-    //   .catch((e) => console.log(e));
+    getCredentials(roomName)
+      .then((creds) => {
+        console.log(creds.data);
+        connect(creds.data);
+      })
+      .catch((e) => console.log(e));
     // setUser(user);
     // const newRoom = await RoomAPI.createSession(roomName);
     // const credential = await CredentialAPI.generateCredential({ sessionId: newRoom.sessionId, role: 'publisher', data: user });
